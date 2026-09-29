@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(./node_modules/.bin/prettier --check resources/js/hooks/use-cookie-consent.ts)",
+      "Bash(./node_modules/.bin/eslint resources/js/hooks/use-cookie-consent.ts)",
+      "Bash(npm run *)",
+      "Bash(./vendor/bin/sail artisan *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(php artisan *)",
+      "Bash(php vendor/bin/pint --dirty --format agent)",
+      "Bash(echo \"TSC_EXIT:$?\")",
+      "Bash(composer install *)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(echo \"GEN:$?\")",
+      "Bash(echo \"TSC:$?\")"
+    ]
+  }
+}
