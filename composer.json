@@ -50,7 +50,8 @@
         "test": "vendor/bin/pest",
         "format": "vendor/bin/pint",
         "format:test": "vendor/bin/pint --test",
-        "stan": "vendor/bin/phpstan analyse"
+        "stan": "vendor/bin/phpstan analyse",
+        "lint": "php -l src/"
     },
     "config": {
         "sort-packages": true,
