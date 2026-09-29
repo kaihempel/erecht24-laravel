@@ -14,9 +14,12 @@
     "require": {
         "php": "^8.3",
         "erecht24/rechtstexte-sdk": "^1.0",
+        "illuminate/console": "^12.0|^13.0",
+        "illuminate/http": "^12.0|^13.0",
         "illuminate/support": "^12.0|^13.0"
     },
     "require-dev": {
+        "larastan/larastan": "^3.0",
         "mockery/mockery": "^1.6",
         "orchestra/testbench": "^10.11|^11.1",
         "pestphp/pest": "^3.8|^4.7",
@@ -46,7 +49,8 @@
     "scripts": {
         "test": "vendor/bin/pest",
         "format": "vendor/bin/pint",
-        "format:test": "vendor/bin/pint --test"
+        "format:test": "vendor/bin/pint --test",
+        "stan": "vendor/bin/phpstan analyse"
     },
     "config": {
         "sort-packages": true,
