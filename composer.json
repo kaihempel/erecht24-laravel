@@ -1,0 +1,58 @@
+{
+    "name": "kaihempel/erecht24-laravel",
+    "description": "Laravel integration for the eRecht24 Rechtstexte SDK.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "erecht24",
+        "rechtstexte",
+        "legal",
+        "imprint",
+        "privacy-policy"
+    ],
+    "require": {
+        "php": "^8.3",
+        "erecht24/rechtstexte-sdk": "^1.0",
+        "illuminate/support": "^12.0|^13.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.6",
+        "orchestra/testbench": "^10.11|^11.1",
+        "pestphp/pest": "^3.8|^4.7",
+        "pestphp/pest-plugin-laravel": "^3.2|^4.1",
+        "laravel/pint": "^1.29"
+    },
+    "autoload": {
+        "psr-4": {
+            "KaiHempel\\ERecht24\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "KaiHempel\\ERecht24\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "KaiHempel\\ERecht24\\ERecht24ServiceProvider"
+            ],
+            "aliases": {
+                "ERecht24": "KaiHempel\\ERecht24\\Facades\\ERecht24"
+            }
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "format": "vendor/bin/pint",
+        "format:test": "vendor/bin/pint --test"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
+
