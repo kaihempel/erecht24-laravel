@@ -16,11 +16,13 @@ jobs:
       matrix:
         include:
           - laravel: '12'
+            laravel_constraint: ^12.0
             php-version: '8.3'
             testbench_constraint: ^10.11
             pest_constraint: ^3.8
             pest_laravel_constraint: ^3.2
           - laravel: '13'
+            laravel_constraint: ^13.0
             php-version: '8.5'
             testbench_constraint: ^11.1
             pest_constraint: ^4.7
