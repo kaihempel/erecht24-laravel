@@ -10,23 +10,20 @@ on:
 
 jobs:
   test:
-    name: Laravel ${{ matrix.laravel }} / PHP ${{ matrix.php-version }}
+    name: PHP ${{ matrix.php-version }} - Laravel ${{ matrix.laravel }} - ${{ matrix.stability }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
+        php-version: ['8.3', '8.4']
+        laravel: ['12']
+        stability: [prefer-lowest, prefer-stable]
         include:
           - laravel: '12'
             laravel_constraint: ^12.0
-            php-version: '8.3'
             testbench_constraint: ^10.11
             pest_constraint: ^3.8
             pest_laravel_constraint: ^3.2
-          - laravel: '13'
-            laravel_constraint: ^13.0
-            php-version: '8.5'
-            testbench_constraint: ^11.1
-            pest_constraint: ^4.7
-            pest_laravel_constraint: ^4.1
 
     steps:
       - name: Checkout code
@@ -46,10 +43,10 @@ jobs:
         run: composer require --no-update "illuminate/support:${{ matrix.laravel_constraint }}"
 
       - name: Select test dependency versions
-        run: composer require --dev --no-update "orchestra/testbench:${{ matrix.testbench_constraint }}" "pestphp/pest:${{ matrix.pest_constraint }}" "pestphp/pest-plugin-laravel:${{ matrix.pest_laravel_constraint }}"    
+        run: composer require --dev --no-update "orchestra/testbench:${{ matrix.testbench_constraint }}" "pestphp/pest:${{ matrix.pest_constraint }}" "pestphp/pest-plugin-laravel:${{ matrix.pest_laravel_constraint }}"
 
       - name: Install Dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+        run: composer update --${{ matrix.stability }} --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Run tests
         run: vendor/bin/pest

@@ -49,9 +49,8 @@
     "scripts": {
         "test": "vendor/bin/pest",
         "format": "vendor/bin/pint",
-        "format:test": "vendor/bin/pint --test",
-        "stan": "vendor/bin/phpstan analyse",
-        "lint": "php -l src/"
+        "lint": "vendor/bin/pint --test",
+        "analyse": "vendor/bin/phpstan analyse"
     },
     "config": {
         "sort-packages": true,
