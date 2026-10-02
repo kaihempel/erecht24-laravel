@@ -104,6 +104,10 @@ final class Erecht24Client
      */
     public function updateClient(PushClient $client): PushClient
     {
+        if ($client->id === null) {
+            throw new \InvalidArgumentException('Cannot update a PushClient without an id.');
+        }
+
         $response = $this->http->put('/clients/'.$client->id, $this->clientPayload($client));
 
         if ($response->failed()) {
@@ -162,7 +166,9 @@ final class Erecht24Client
      */
     public function fireTestPush(int $clientId, string $type = 'ping'): void
     {
-        $response = $this->http->post('/clients/'.$clientId.'/testPush?'.http_build_query(['type' => $type]));
+        $response = $this->http
+            ->withQueryParameters(['type' => $type])
+            ->post('/clients/'.$clientId.'/testPush');
 
         if ($response->failed()) {
             throw $this->toException($response);
@@ -174,14 +180,14 @@ final class Erecht24Client
      */
     private function clientPayload(PushClient $client): array
     {
-        return [
+        return array_filter([
             'push_method' => $client->pushMethod,
             'push_uri' => $client->pushUri,
             'cms' => $client->cms,
             'cms_version' => $client->cmsVersion,
             'plugin_name' => $client->pluginName,
             'author_mail' => $client->authorMail,
-        ];
+        ], static fn (mixed $value): bool => $value !== null);
     }
 
     private function toException(Response $response): Erecht24ApiException
@@ -189,11 +195,13 @@ final class Erecht24Client
         $status = $response->status();
         $apiMessage = $response->json('message');
         $apiMessage = is_string($apiMessage) ? $apiMessage : null;
+        $debug = $response->json('debug');
+        $debug = is_array($debug) ? $debug : null;
 
         if ($status === 401) {
-            return new Erecht24AuthenticationException($status, $apiMessage);
+            return new Erecht24AuthenticationException($status, $apiMessage, $debug);
         }
 
-        return new Erecht24ApiException($status, $apiMessage);
+        return new Erecht24ApiException($status, $apiMessage, $debug);
     }
 }
