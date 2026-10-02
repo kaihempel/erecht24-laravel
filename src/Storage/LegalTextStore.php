@@ -47,8 +47,19 @@ final class LegalTextStore
             sourceModifiedAt: $sourceModifiedAt,
         );
 
-        $this->atomicWrite($this->contentPath($type, $lang), $html);
-        $this->atomicWrite($this->metaPath($type, $lang), $metadata->toJson());
+        $contentPath = $this->contentPath($type, $lang);
+
+        $this->atomicWrite($contentPath, $html);
+
+        try {
+            $this->atomicWrite($this->metaPath($type, $lang), $metadata->toJson());
+        } catch (\Throwable $e) {
+            // Keep content and metadata in sync: if metadata fails to save, don't
+            // leave behind content that `has()`/`get()` would report as saved.
+            Storage::disk($this->settings->disk())->delete($contentPath);
+
+            throw $e;
+        }
     }
 
     /**
@@ -131,9 +142,7 @@ final class LegalTextStore
         $disk = Storage::disk($this->settings->disk());
 
         foreach ([$this->contentPath($type, $lang), $this->metaPath($type, $lang)] as $path) {
-            if ($disk->exists($path)) {
-                $disk->delete($path);
-            }
+            $disk->delete($path);
         }
     }
 
@@ -182,18 +191,12 @@ final class LegalTextStore
             if ($moved === false) {
                 throw LegalTextStoreException::forPath($path);
             }
-        } catch (LegalTextStoreException $e) {
-            if ($disk->exists($tempPath)) {
-                $disk->delete($tempPath);
-            }
-
-            throw $e;
         } catch (\Throwable $e) {
             if ($disk->exists($tempPath)) {
                 $disk->delete($tempPath);
             }
 
-            throw LegalTextStoreException::forPath($path, $e);
+            throw $e instanceof LegalTextStoreException ? $e : LegalTextStoreException::forPath($path, $e);
         }
     }
 }

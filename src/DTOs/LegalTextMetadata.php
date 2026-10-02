@@ -25,8 +25,12 @@ final readonly class LegalTextMetadata
 
     public static function fromJson(string $json): self
     {
-        /** @var array{fetched_at: string, source_modified_at: ?string} $data */
+        /** @var array{fetched_at?: string, source_modified_at?: ?string} $data */
         $data = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
+
+        if (! isset($data['fetched_at']) || ! is_string($data['fetched_at'])) {
+            throw new \InvalidArgumentException('Legal text metadata is missing a valid "fetched_at" value.');
+        }
 
         return new self(
             fetchedAt: CarbonImmutable::parse($data['fetched_at']),
