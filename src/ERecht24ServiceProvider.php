@@ -14,6 +14,8 @@ class ERecht24ServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/erecht24.php', 'erecht24');
 
         $this->app->singleton(Erecht24Settings::class, fn ($app) => new Erecht24Settings($app->make('config')));
+
+        $this->app->singleton(Erecht24Client::class, fn ($app) => new Erecht24Client($app->make(Erecht24Settings::class)));
     }
 
     public function boot(): void
