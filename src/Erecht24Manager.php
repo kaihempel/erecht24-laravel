@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KaiHempel\ERecht24;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Log;
 use KaiHempel\ERecht24\Config\Erecht24Settings;
 use KaiHempel\ERecht24\Enums\LegalTextType;
 use KaiHempel\ERecht24\Storage\LegalTextStore;
@@ -40,7 +41,8 @@ final class Erecht24Manager
     }
 
     /**
-     * When the text that `html()` would return was last fetched, or null if there is none.
+     * When the text that `html()` would return was last fetched, or null if there is none
+     * or its metadata cannot be read (logged, never thrown).
      *
      * @throws \InvalidArgumentException when $type is not a known legal text type
      */
@@ -49,7 +51,22 @@ final class Erecht24Manager
         $type = $this->type($type);
         $resolved = $this->resolver->resolve($type, $lang);
 
-        return $resolved === null ? null : $this->store->lastModified($type, $resolved->lang);
+        if ($resolved === null) {
+            return null;
+        }
+
+        try {
+            return $this->store->lastModified($type, $resolved->lang);
+        } catch (\Throwable $e) {
+            Log::warning(sprintf(
+                'eRecht24: could not read stored %s metadata for language %s (%s).',
+                $type->fileSlug(),
+                $resolved->lang,
+                $e::class,
+            ));
+
+            return null;
+        }
     }
 
     /**

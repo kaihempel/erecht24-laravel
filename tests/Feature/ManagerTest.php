@@ -70,3 +70,13 @@ it('lists the configured languages', function (): void {
 it('rejects unknown type strings', function (string $method): void {
     ERecht24::{$method}('bogus');
 })->with(['html', 'has', 'lastModified'])->throws(InvalidArgumentException::class);
+
+it('returns null instead of throwing when the metadata is corrupt', function (): void {
+    Storage::disk(config('erecht24.disk'))->put(
+        config('erecht24.directory').'/imprint.de.meta.json',
+        '{not json',
+    );
+
+    expect(ERecht24::lastModified('imprint', 'de'))->toBeNull()
+        ->and(ERecht24::html('imprint', 'de'))->toBe('<p>DE imprint</p>');
+});
