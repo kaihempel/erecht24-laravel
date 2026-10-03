@@ -16,7 +16,8 @@
         "erecht24/rechtstexte-sdk": "^1.0",
         "illuminate/console": "^12.0|^13.0",
         "illuminate/http": "^12.0|^13.0",
-        "illuminate/support": "^12.0|^13.0"
+        "illuminate/support": "^12.0|^13.0",
+        "illuminate/view": "^12.0|^13.0"
     },
     "require-dev": {
         "larastan/larastan": "^3.0",

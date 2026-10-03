@@ -66,6 +66,38 @@ $store->forget(LegalTextType::Imprint, 'de');
 
 Files are saved as `<directory>/<type>.<lang>.html` with a `.meta.json` companion, written via temp file + move.
 
+### Render texts in Blade
+
+After syncing (`php artisan erecht24:sync`), output the stored texts with Blade components:
+
+```blade
+<x-erecht24::imprint />
+<x-erecht24::privacy-policy lang="en" class="prose" />
+<x-erecht24::privacy-policy-social-media />
+
+{{-- generic form --}}
+<x-erecht24::legal-text type="imprint" lang="de" />
+```
+
+- `type` (generic component only): `imprint`, `privacyPolicy`, `privacyPolicySocialMedia` (also `privacy-policy`, `privacy-policy-social-media`). Other values throw an `\InvalidArgumentException` listing the allowed ones.
+- `lang` (optional): `de` or `en`; regional forms such as `de_DE` are reduced to `de`.
+- Extra HTML attributes (e.g. `class`) are forwarded to the wrapper `<div>`, which also carries a `lang` attribute with the resolved language.
+- Rendering only reads the local store; it never calls the API.
+
+**Language resolution:** the explicit `lang` attribute, then the application locale (`app()->getLocale()`), then the first language in `ERECHT24_TEXT_LANGUAGES`. Only configured languages are considered. If none of these has stored content, the first configured language that does is used.
+
+**Missing text:** if nothing is stored for the type, a short neutral message is rendered instead of a blank page and no exception is thrown. With `APP_DEBUG=true` it additionally shows the hint `php artisan erecht24:sync`; with debug off the hint is never output.
+
+**Customizing the markup:**
+
+```bash
+php artisan vendor:publish --tag=erecht24-views
+```
+
+Views are copied to `resources/views/vendor/erecht24/` and override the package views (`components/legal-text`, `imprint`, `privacy-policy`, `privacy-policy-social-media`, `missing`).
+
+> **Security:** the stored HTML comes from the trusted eRecht24 API and is output unescaped (`{!! !!}`) and unsanitized on purpose. Never route user-supplied content through these views.
+
 ### Push clients
 
 `Erecht24Client` also offers `createClient()`, `updateClient()`, `deleteClient()`, `listClients()` and `fireTestPush()`. `updateClient()` returns a fresh secret that you must persist.

@@ -41,3 +41,9 @@ All notable changes to `erecht24-laravel` will be documented in this file.
   - `erecht24:unregister {client-id?} {--force}` — removes a push client by ID or by the current push URI, with confirmation unless `--force`.
   - `erecht24:sync` now names the failed legal text types on partial failure.
   - New `erecht24.author_mail` config (`ERECHT24_AUTHOR_MAIL`), `Erecht24Settings::pushUri()`, `authorMail()`, `hasApiKey()`, `hasPluginKey()`, `hasPushSecret()`; `PushClientRegistrar`, `StatusInspector` and `EnvFileWriter` services bound as singletons.
+- Blade components and views (additive):
+  - `<x-erecht24::imprint />`, `<x-erecht24::privacy-policy />`, `<x-erecht24::privacy-policy-social-media />` and the generic `<x-erecht24::legal-text type="..." />` render the stored legal text (no API calls) unescaped inside a wrapper view; extra attributes are forwarded to the wrapper. An invalid `type` throws `\InvalidArgumentException` naming the allowed values.
+  - Language resolution: `lang` attribute, then app locale (regional forms like `de_DE` reduced to `de`), then first configured language, then any stored language in configured order. Blank or unreadable content counts as missing.
+  - When nothing is stored the neutral `erecht24::missing` view renders instead (with a `php artisan erecht24:sync` hint only when `app.debug` is true); invalid language configuration or store read errors never throw (read errors are logged without paths or secrets).
+  - Views are registered under the `erecht24` namespace and publishable with `php artisan vendor:publish --tag=erecht24-views` (to `resources/views/vendor/erecht24`).
+  - New `illuminate/view` requirement (`^12.0|^13.0`); internal `KaiHempel\ERecht24\View\LegalTextResolver` bound as a singleton.
