@@ -52,6 +52,12 @@ class ERecht24ServiceProvider extends ServiceProvider
             $app->make(Erecht24Settings::class),
         ));
 
+        $this->app->singleton(Erecht24Manager::class, fn ($app) => new Erecht24Manager(
+            $app->make(LegalTextResolver::class),
+            $app->make(LegalTextStore::class),
+            $app->make(Erecht24Settings::class),
+        ));
+
         $this->app->singleton(EnvFileWriter::class, fn () => new EnvFileWriter);
     }
 

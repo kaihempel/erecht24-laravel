@@ -17,11 +17,11 @@ CI (`.github/workflows`) runs lint + analyse and the test matrix (PHP 8.3/8.4, p
 - `Erecht24Client` — HTTP client (Laravel `Http`) for `/imprint`, `/privacyPolicy`, `/privacyPolicySocialMedia` and `/clients` CRUD + `testPush`. Retries 3× (200ms) on connection errors, 5xx, 429. Maps failures to `Erecht24ApiException` (401 → `Erecht24AuthenticationException`). Never put keys/secrets in exception messages (covered by `SecretRedactionTest`). API details: `specs/002-erecht24-api-client/research.md`.
 - `Storage/LegalTextStore` — persists `<directory>/<fileSlug>.<lang>.html` plus `.meta.json` (`fetched_at`, `source_modified_at`) on the configured disk. Writes are temp-file + move; metadata failure removes the content again. Never writes `.php`/`.blade.php`. Unsupported language → `\InvalidArgumentException` before any I/O.
 - `View/` — Blade integration under view namespace `erecht24` (provider `loadViewsFrom` + `Blade::componentNamespace`): `LegalText` (`<x-erecht24::legal-text type=…>`), `Imprint`, `PrivacyPolicy`, `PrivacyPolicySocialMedia` extend `AbstractLegalTextComponent`; `LegalTextResolver` (singleton) picks lang (explicit → app locale primary subtag → first configured → any stored, never throws, logs read errors) and returns `ResolvedLegalText` or null → `erecht24::missing`. Views in `resources/views` publish via tag `erecht24-views`. Content is output unescaped (trusted API HTML). Components read the store only, no HTTP. Views are called via `View::first([...])` because Larastan's `view-string` cannot see package-namespaced views.
+- `Erecht24Manager` (singleton) + `Facades/ERecht24` — programmatic access for Inertia etc.: `html()`, `has()`, `lastModified()`, `languages()`; accepts `LegalTextType` or string (unknown → `\InvalidArgumentException`); delegates language fallback to `LegalTextResolver`; store only, no HTTP.
 - `DTOs/` — readonly `LegalText`, `LegalTextMetadata`, `PushClient`; `Enums/LegalTextType` (`fileSlug()` for storage names).
 
 ## Known gotchas
 
-- `Facades/ERecht24` uses accessor `'erecht24'`, which the service provider does **not** bind yet — the facade is not functional until bound.
 - `LegalTextStore` "atomic" on non-local disks (S3) means no truncated file at the final path, not a single atomic op.
 - `Erecht24Client` reads credentials in its constructor, so resolving it without configured keys throws `MissingConfigurationException`.
 
