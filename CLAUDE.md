@@ -34,4 +34,4 @@ CI (`.github/workflows`) runs lint + analyse and the test matrix (PHP 8.3/8.4, p
 
 ## Status
 
-Done: 001 config, 002 API client, 003 legal text store, 004 legal text sync, 005 Artisan commands, 006 Blade views/components (`src/View`, `resources/views`).
+Done: 001 config, 002 API client, 003 legal text store, 004 legal text sync, 005 Artisan commands, 006 Blade views/components (`src/View`, `resources/views`), README EN/DE + deployment guide (#12; `README.md`/`README.de.md` must stay content-equivalent, env table guarded by `ReadmeEnvReferenceTest`).
