@@ -56,3 +56,7 @@ All notable changes to `erecht24-laravel` will be documented in this file.
   - When nothing is stored the neutral `erecht24::missing` view renders instead (with a `php artisan erecht24:sync` hint only when `app.debug` is true); invalid language configuration or store read errors never throw (read errors are logged without paths or secrets).
   - Views are registered under the `erecht24` namespace and publishable with `php artisan vendor:publish --tag=erecht24-views` (to `resources/views/vendor/erecht24`).
   - New `illuminate/view` requirement (`^12.0|^13.0`); internal `KaiHempel\ERecht24\View\LegalTextResolver` bound as a singleton.
+
+### Tests
+
+- End-to-end push flow tests under `tests/Feature/EndToEnd`: push → queued job → API → store → Blade for every legal text type and for `de,en`, `de`-only and `en`-only configs; previous text kept and rendered when the API call fails (5xx, connection error); negative security scenarios (wrong/missing secret, unconfigured secret, 1 MB payloads, non-form/JSON bodies, non-POST methods, rate limiting) with no job, API call or file write; no API key, plugin key or push secret in any log record, response or exception; full flow on a custom `ERECHT24_PUSH_PATH`.
