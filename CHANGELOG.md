@@ -35,3 +35,9 @@ All notable changes to `erecht24-laravel` will be documented in this file.
   - `$tries`/`backoff()` read from `erecht24.sync.tries`/`erecht24.sync.backoff`; permanent failure (`failed()`) logs a secret-free warning and leaves stored content untouched.
   - `SyncLegalTextJob::dispatchForPushType(string $rawType): void` — safe entry point for an incoming push's raw type value; logs a warning and does not dispatch for an unrecognized value.
 - `erecht24:sync {type?}` Artisan command, reusing `LegalTextSynchronizer`, for manual/full resynchronization: synchronizes one type if given (exits `1` for an unrecognized type argument without making any API/store call) or all types if omitted, printing written/skipped languages per type and exiting `1` if any type failed to synchronize.
+- Artisan commands (additive):
+  - `erecht24:register {--push-uri=} {--write-env}` — creates or idempotently updates (matched by normalized push URI) this environment's push client; refuses local/private/unreachable URIs and a 4th client; prints the newly issued secret once or writes `ERECHT24_PUSH_SECRET` into `.env` (`--write-env`).
+  - `erecht24:status {--test-push}` — secret-free health report (configuration presence, languages, registered push clients, stored legal text timestamps) and optional test push.
+  - `erecht24:unregister {client-id?} {--force}` — removes a push client by ID or by the current push URI, with confirmation unless `--force`.
+  - `erecht24:sync` now names the failed legal text types on partial failure.
+  - New `erecht24.author_mail` config (`ERECHT24_AUTHOR_MAIL`), `Erecht24Settings::pushUri()`, `authorMail()`, `hasApiKey()`, `hasPluginKey()`, `hasPushSecret()`; `PushClientRegistrar`, `StatusInspector` and `EnvFileWriter` services bound as singletons.

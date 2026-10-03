@@ -63,6 +63,31 @@ final class Erecht24Settings
     }
 
     /**
+     * Computes the push URI eRecht24 should send change notifications to.
+     *
+     * Returns `$override` verbatim when given; otherwise the host application's
+     * `app.url` (trailing slash trimmed) concatenated with the configured push path.
+     */
+    public function pushUri(?string $override = null): string
+    {
+        if ($override !== null) {
+            return $override;
+        }
+
+        return rtrim((string) $this->config->get('app.url'), '/').$this->pushPath();
+    }
+
+    /**
+     * Optional contact email submitted when registering a push client.
+     */
+    public function authorMail(): ?string
+    {
+        $value = (string) $this->config->get('erecht24.author_mail');
+
+        return $value === '' ? null : $value;
+    }
+
+    /**
      * @return array<int, string> subset of ['de', 'en'], deduplicated.
      *
      * @throws InvalidConfigurationException when any entry is unsupported or the list would be empty.
@@ -155,13 +180,42 @@ final class Erecht24Settings
     }
 
     /**
+     * Non-throwing presence check — never throws, unlike {@see apiKey()}.
+     */
+    public function hasApiKey(): bool
+    {
+        return $this->hasString('api_key');
+    }
+
+    /**
+     * Non-throwing presence check — never throws, unlike {@see pluginKey()}.
+     */
+    public function hasPluginKey(): bool
+    {
+        return $this->hasString('plugin_key');
+    }
+
+    /**
+     * Non-throwing presence check — never throws, unlike {@see pushSecret()}.
+     */
+    public function hasPushSecret(): bool
+    {
+        return $this->hasString('push_secret');
+    }
+
+    private function hasString(string $key): bool
+    {
+        return trim((string) $this->config->get('erecht24.'.$key)) !== '';
+    }
+
+    /**
      * @throws MissingConfigurationException when empty
      */
     private function requireString(string $key): string
     {
         $value = (string) $this->config->get('erecht24.'.$key);
 
-        if ($value === '') {
+        if (trim($value) === '') {
             throw MissingConfigurationException::forKey($key);
         }
 

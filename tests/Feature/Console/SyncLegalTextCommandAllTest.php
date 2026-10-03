@@ -26,3 +26,16 @@ it('synchronizes all types and prints a per-type summary', function (): void {
 
     Http::assertSentCount(3);
 });
+
+it('exits non-zero and names the failed types when some types fail', function (): void {
+    Http::fake([
+        '*/imprint' => Http::response(['html_de' => '<h1>Impressum</h1>', 'html_en' => '<h1>Imprint</h1>'], 200),
+        '*/privacyPolicySocialMedia' => Http::response(['message' => 'down'], 503),
+        '*/privacyPolicy' => Http::response(['message' => 'down'], 503),
+    ]);
+
+    $this->artisan('erecht24:sync')
+        ->expectsOutputToContain('imprint: written')
+        ->expectsOutputToContain('Failed to synchronize: privacyPolicy, privacyPolicySocialMedia')
+        ->assertExitCode(1);
+});

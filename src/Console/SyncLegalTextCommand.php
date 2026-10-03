@@ -46,8 +46,13 @@ final class SyncLegalTextCommand extends Command
             $this->report($result);
         }
 
-        if (count($results) < count(LegalTextType::cases())) {
-            $this->error('One or more legal text types failed to synchronize; see the log for details.');
+        $failed = array_values(array_filter(
+            array_map(static fn (LegalTextType $type): string => $type->value, LegalTextType::cases()),
+            static fn (string $value): bool => ! array_key_exists($value, $results),
+        ));
+
+        if ($failed !== []) {
+            $this->error(sprintf('Failed to synchronize: %s; see the log for details.', implode(', ', $failed)));
 
             return self::FAILURE;
         }
