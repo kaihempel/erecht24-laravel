@@ -40,8 +40,16 @@ final class SyncLegalTextCommand extends Command
             return self::SUCCESS;
         }
 
-        foreach ($synchronizer->syncAll() as $result) {
+        $results = $synchronizer->syncAll();
+
+        foreach ($results as $result) {
             $this->report($result);
+        }
+
+        if (count($results) < count(LegalTextType::cases())) {
+            $this->error('One or more legal text types failed to synchronize; see the log for details.');
+
+            return self::FAILURE;
         }
 
         return self::SUCCESS;

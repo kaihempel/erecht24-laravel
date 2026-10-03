@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KaiHempel\ERecht24\Sync;
 
+use Illuminate\Support\Facades\Log;
 use KaiHempel\ERecht24\Config\Erecht24Settings;
 use KaiHempel\ERecht24\Enums\LegalTextType;
 use KaiHempel\ERecht24\Erecht24Client;
@@ -63,9 +64,15 @@ final class LegalTextSynchronizer
         foreach (LegalTextType::cases() as $type) {
             try {
                 $results[$type->value] = $this->sync($type);
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
                 // A failure synchronizing one type must not prevent the others
-                // from being attempted; syncAll() intentionally swallows it here.
+                // from being attempted; syncAll() intentionally does not rethrow,
+                // but the failure is still logged so it isn't silently invisible.
+                Log::warning('eRecht24 legal text sync failed during syncAll()', [
+                    'type' => $type->value,
+                    'exception' => $e->getMessage(),
+                ]);
+
                 continue;
             }
         }

@@ -27,11 +27,11 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 - `erecht24.sync.tries` (env `ERECHT24_SYNC_TRIES`, default `3`) and `erecht24.sync.backoff` (default `[60, 300, 900]`) configuration keys, with `Erecht24Settings::syncTries(): int` and `Erecht24Settings::syncBackoff(): array` accessors.
 - `KaiHempel\ERecht24\Sync\LegalTextSynchronizer`, bound as a container singleton:
   - `sync(LegalTextType $type): SyncResult` — fetches a legal text type via `Erecht24Client` and writes it per configured language via `LegalTextStore`, skipping (without overwriting) any language the API returns no content for, and dispatching `LegalTextUpdated` only when at least one language was written.
-  - `syncAll(): array` — synchronizes every `LegalTextType`, keyed by `LegalTextType::value`; a failure synchronizing one type does not prevent the others from being attempted.
+  - `syncAll(): array` — synchronizes every `LegalTextType`, keyed by `LegalTextType::value`; a failure synchronizing one type does not prevent the others from being attempted, and is logged (secret-free) rather than silently dropped.
 - `KaiHempel\ERecht24\Sync\SyncResult` readonly DTO (`type`, `written`, `skipped`) describing the outcome of one `sync()` call.
 - `KaiHempel\ERecht24\Events\LegalTextUpdated` event (`type`, `languages`), dispatched after a successful write for host apps to react to (e.g. clearing a cache).
 - `KaiHempel\ERecht24\Jobs\SyncLegalTextJob`, a queued (`ShouldQueue`) job running `LegalTextSynchronizer::sync()`:
   - `ShouldBeUnique` per `LegalTextType`, so duplicate dispatches for the same type collapse into one execution while different types run independently.
   - `$tries`/`backoff()` read from `erecht24.sync.tries`/`erecht24.sync.backoff`; permanent failure (`failed()`) logs a secret-free warning and leaves stored content untouched.
   - `SyncLegalTextJob::dispatchForPushType(string $rawType): void` — safe entry point for an incoming push's raw type value; logs a warning and does not dispatch for an unrecognized value.
-- `erecht24:sync {type?}` Artisan command, reusing `LegalTextSynchronizer`, for manual/full resynchronization: synchronizes one type if given (exits `1` for an unrecognized type argument without making any API/store call) or all types if omitted, printing written/skipped languages per type.
+- `erecht24:sync {type?}` Artisan command, reusing `LegalTextSynchronizer`, for manual/full resynchronization: synchronizes one type if given (exits `1` for an unrecognized type argument without making any API/store call) or all types if omitted, printing written/skipped languages per type and exiting `1` if any type failed to synchronize.
