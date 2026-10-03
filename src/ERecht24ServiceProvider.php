@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace KaiHempel\ERecht24;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Foundation\CachesRoutes;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use KaiHempel\ERecht24\Config\Erecht24Settings;
 use KaiHempel\ERecht24\Console\RegisterPushClientCommand;
 use KaiHempel\ERecht24\Console\StatusCommand;
 use KaiHempel\ERecht24\Console\SyncLegalTextCommand;
 use KaiHempel\ERecht24\Console\UnregisterPushClientCommand;
+use KaiHempel\ERecht24\Http\Controllers\PushController;
 use KaiHempel\ERecht24\Registration\PushClientRegistrar;
 use KaiHempel\ERecht24\Status\StatusInspector;
 use KaiHempel\ERecht24\Storage\LegalTextStore;
@@ -20,6 +27,10 @@ use KaiHempel\ERecht24\View\LegalTextResolver;
 
 class ERecht24ServiceProvider extends ServiceProvider
 {
+    public const PUSH_RATE_LIMITER = 'erecht24-push';
+
+    public const PUSH_ROUTE_NAME = 'erecht24.push';
+
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/erecht24.php', 'erecht24');
@@ -75,6 +86,9 @@ class ERecht24ServiceProvider extends ServiceProvider
             __DIR__.'/../resources/views' => resource_path('views/vendor/erecht24'),
         ], 'erecht24-views');
 
+        $this->registerPushRateLimiter();
+        $this->registerPushRoute();
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 SyncLegalTextCommand::class,
@@ -83,5 +97,34 @@ class ERecht24ServiceProvider extends ServiceProvider
                 StatusCommand::class,
             ]);
         }
+    }
+
+    private function registerPushRateLimiter(): void
+    {
+        RateLimiter::for(self::PUSH_RATE_LIMITER, fn (Request $request): Limit => Limit::perMinute(
+            $this->app->make(Erecht24Settings::class)->pushRateLimit(),
+        )->by((string) $request->ip()));
+    }
+
+    /**
+     * Registers the push webhook outside the `web` group (no session, cookies
+     * or CSRF) — eRecht24 authenticates with the shared push secret instead.
+     */
+    private function registerPushRoute(): void
+    {
+        if ($this->app instanceof CachesRoutes && $this->app->routesAreCached()) {
+            return;
+        }
+
+        $settings = $this->app->make(Erecht24Settings::class);
+
+        if (! $settings->pushEnabled()) {
+            return;
+        }
+
+        $this->app->make(Router::class)
+            ->post($settings->pushPath(), PushController::class)
+            ->middleware(ThrottleRequests::using(self::PUSH_RATE_LIMITER))
+            ->name(self::PUSH_ROUTE_NAME);
     }
 }

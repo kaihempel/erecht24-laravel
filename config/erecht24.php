@@ -32,6 +32,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Push Webhook Endpoint
+    |--------------------------------------------------------------------------
+    |
+    | `push_enabled` toggles registration of the push webhook route (POST
+    | on `push_path`, named `erecht24.push`). `push_rate_limit` is the
+    | maximum number of push requests per minute per IP address.
+    |
+    */
+
+    'push_enabled' => env('ERECHT24_PUSH_ENABLED', true),
+
+    'push_rate_limit' => env('ERECHT24_PUSH_RATE_LIMIT', 30),
+
+    /*
+    |--------------------------------------------------------------------------
     | Push Client Registration
     |--------------------------------------------------------------------------
     |
