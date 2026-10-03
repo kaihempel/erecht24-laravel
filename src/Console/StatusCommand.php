@@ -60,6 +60,12 @@ final class StatusCommand extends Command
 
     private function reportTestPush(StatusInspector $inspector, PushClientRegistrar $registrar, StatusReport $report): void
     {
+        if ($report->clientsError !== null) {
+            $this->warn('Test push skipped: push clients could not be listed.');
+
+            return;
+        }
+
         $result = $inspector->testPush($report, $registrar->currentPushUri());
 
         if (! $result->matched) {
