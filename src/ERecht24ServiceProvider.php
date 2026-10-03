@@ -6,8 +6,14 @@ namespace KaiHempel\ERecht24;
 
 use Illuminate\Support\ServiceProvider;
 use KaiHempel\ERecht24\Config\Erecht24Settings;
+use KaiHempel\ERecht24\Console\RegisterPushClientCommand;
+use KaiHempel\ERecht24\Console\StatusCommand;
 use KaiHempel\ERecht24\Console\SyncLegalTextCommand;
+use KaiHempel\ERecht24\Console\UnregisterPushClientCommand;
+use KaiHempel\ERecht24\Registration\PushClientRegistrar;
+use KaiHempel\ERecht24\Status\StatusInspector;
 use KaiHempel\ERecht24\Storage\LegalTextStore;
+use KaiHempel\ERecht24\Support\EnvFileWriter;
 use KaiHempel\ERecht24\Sync\LegalTextSynchronizer;
 
 class ERecht24ServiceProvider extends ServiceProvider
@@ -27,6 +33,19 @@ class ERecht24ServiceProvider extends ServiceProvider
             $app->make(LegalTextStore::class),
             $app->make(Erecht24Settings::class),
         ));
+
+        $this->app->singleton(PushClientRegistrar::class, fn ($app) => new PushClientRegistrar(
+            $app->make(Erecht24Settings::class),
+            $app,
+        ));
+
+        $this->app->singleton(StatusInspector::class, fn ($app) => new StatusInspector(
+            $app->make(Erecht24Settings::class),
+            $app->make(LegalTextStore::class),
+            $app,
+        ));
+
+        $this->app->singleton(EnvFileWriter::class, fn () => new EnvFileWriter);
     }
 
     public function boot(): void
@@ -38,6 +57,9 @@ class ERecht24ServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 SyncLegalTextCommand::class,
+                RegisterPushClientCommand::class,
+                UnregisterPushClientCommand::class,
+                StatusCommand::class,
             ]);
         }
     }

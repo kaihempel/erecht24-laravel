@@ -32,6 +32,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Push Client Registration
+    |--------------------------------------------------------------------------
+    |
+    | Optional contact email submitted when registering this environment as
+    | a push client via `erecht24:register`.
+    |
+    */
+
+    'author_mail' => env('ERECHT24_AUTHOR_MAIL'),
+
+    /*
+    |--------------------------------------------------------------------------
     | API Base URL
     |--------------------------------------------------------------------------
     */

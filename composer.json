@@ -50,7 +50,7 @@
         "test": "vendor/bin/pest",
         "format": "vendor/bin/pint",
         "lint": "vendor/bin/pint --test",
-        "analyse": "vendor/bin/phpstan analyse"
+        "analyse": "vendor/bin/phpstan analyse --memory-limit=1G"
     },
     "config": {
         "sort-packages": true,
