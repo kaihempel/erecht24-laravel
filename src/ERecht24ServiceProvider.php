@@ -6,7 +6,9 @@ namespace KaiHempel\ERecht24;
 
 use Illuminate\Support\ServiceProvider;
 use KaiHempel\ERecht24\Config\Erecht24Settings;
+use KaiHempel\ERecht24\Console\SyncLegalTextCommand;
 use KaiHempel\ERecht24\Storage\LegalTextStore;
+use KaiHempel\ERecht24\Sync\LegalTextSynchronizer;
 
 class ERecht24ServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,12 @@ class ERecht24ServiceProvider extends ServiceProvider
         $this->app->singleton(Erecht24Client::class, fn ($app) => new Erecht24Client($app->make(Erecht24Settings::class)));
 
         $this->app->singleton(LegalTextStore::class, fn ($app) => new LegalTextStore($app->make(Erecht24Settings::class)));
+
+        $this->app->singleton(LegalTextSynchronizer::class, fn ($app) => new LegalTextSynchronizer(
+            $app->make(Erecht24Client::class),
+            $app->make(LegalTextStore::class),
+            $app->make(Erecht24Settings::class),
+        ));
     }
 
     public function boot(): void
@@ -26,5 +34,11 @@ class ERecht24ServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/erecht24.php' => config_path('erecht24.php'),
         ], 'erecht24-config');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                SyncLegalTextCommand::class,
+            ]);
+        }
     }
 }
