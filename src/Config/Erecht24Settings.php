@@ -14,6 +14,8 @@ final class Erecht24Settings
 
     private const DEFAULT_PUSH_PATH = '/api/erecht24/push';
 
+    private const DEFAULT_PUSH_RATE_LIMIT = 30;
+
     public function __construct(private readonly ConfigRepository $config) {}
 
     /**
@@ -55,6 +57,48 @@ final class Erecht24Settings
         }
 
         return $normalized;
+    }
+
+    /**
+     * Whether the push webhook route is registered. Unset/empty means enabled.
+     *
+     * @throws InvalidConfigurationException when the value is not a recognizable boolean.
+     */
+    public function pushEnabled(): bool
+    {
+        $raw = $this->config->get('erecht24.push_enabled', true);
+
+        if ($raw === null || $raw === '') {
+            return true;
+        }
+
+        $enabled = is_bool($raw) || is_int($raw) || is_string($raw)
+            ? filter_var(is_string($raw) ? trim($raw) : $raw, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)
+            : null;
+
+        if ($enabled === null) {
+            throw InvalidConfigurationException::forKey('push_enabled', 'must be a boolean (true/false, 1/0, on/off, yes/no)');
+        }
+
+        return $enabled;
+    }
+
+    /**
+     * Maximum push requests per minute per IP address.
+     *
+     * @throws InvalidConfigurationException when not a positive integer.
+     */
+    public function pushRateLimit(): int
+    {
+        $raw = $this->config->get('erecht24.push_rate_limit', self::DEFAULT_PUSH_RATE_LIMIT);
+
+        $limit = filter_var($raw, FILTER_VALIDATE_INT);
+
+        if ($limit === false || $limit <= 0) {
+            throw InvalidConfigurationException::forKey('push_rate_limit', 'must be a positive integer');
+        }
+
+        return $limit;
     }
 
     public function baseUrl(): string

@@ -2,7 +2,7 @@
 
 Laravel integration for the [eRecht24](https://www.e-recht24.de) legal-texts API: fetch your imprint and privacy policies, manage push clients, and store the texts locally as plain HTML files.
 
-> **Status:** early development. The API client, configuration and storage layers are available; automatic sync, the push webhook endpoint and an Artisan sync command are planned.
+> **Status:** early development. The API client, configuration, storage, sync (job + `erecht24:sync`), Blade components and the push webhook endpoint are available.
 
 ## Requirements
 
@@ -28,6 +28,8 @@ Set these in `.env`:
 | `ERECHT24_PLUGIN_KEY` | – | **Required.** Plugin key |
 | `ERECHT24_PUSH_SECRET` | – | Secret for verifying pushes |
 | `ERECHT24_PUSH_PATH` | `/api/erecht24/push` | Push webhook path |
+| `ERECHT24_PUSH_ENABLED` | `true` | Register the push webhook route |
+| `ERECHT24_PUSH_RATE_LIMIT` | `30` | Max push requests per minute per IP |
 | `ERECHT24_BASE_URL` | `https://api.e-recht24.de/v2` | API base URL |
 | `ERECHT24_TEXT_LANGUAGES` | `de,en` | Comma-separated; `de` and `en` supported |
 | `ERECHT24_DISK` | `local` | Filesystem disk for stored texts |
@@ -97,6 +99,20 @@ php artisan vendor:publish --tag=erecht24-views
 Views are copied to `resources/views/vendor/erecht24/` and override the package views (`components/legal-text`, `imprint`, `privacy-policy`, `privacy-policy-social-media`, `missing`).
 
 > **Security:** the stored HTML comes from the trusted eRecht24 API and is output unescaped (`{!! !!}`) and unsanitized on purpose. Never route user-supplied content through these views.
+
+### Push webhook
+
+The package registers `POST /api/erecht24/push` (`ERECHT24_PUSH_PATH`, route name `erecht24.push`). eRecht24 calls it with `erecht24_secret` and `erecht24_type`:
+
+| Request | Response |
+|---|---|
+| no `ERECHT24_PUSH_SECRET` configured | `503` |
+| missing/wrong secret | `403` |
+| `erecht24_type=ping` | `200 {"code":200,"message":"pong"}` |
+| `imprint`, `privacyPolicy`, `privacyPolicySocialMedia` | `200 {"code":200,"message":"queued"}`, dispatches `SyncLegalTextJob` |
+| any other type | `422` |
+
+The route is outside the `web` middleware group (no session, cookies or CSRF token needed) and throttled to `ERECHT24_PUSH_RATE_LIMIT` requests per minute per IP. Set `ERECHT24_PUSH_ENABLED=false` to not register it. A queue worker must be running to process the sync jobs. With `php artisan route:cache`, re-cache routes after changing the push path or toggle.
 
 ### Push clients
 

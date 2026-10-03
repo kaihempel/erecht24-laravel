@@ -6,6 +6,12 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 
 ### Added
 
+- Push webhook endpoint `KaiHempel\ERecht24\Http\Controllers\PushController`, registered by the service provider as `POST {push_path}` (route name `erecht24.push`, default `/api/erecht24/push`) outside the `web` group (no session, cookies or CSRF), throttled by the `erecht24-push` rate limiter:
+  - Verifies `erecht24_secret` against `ERECHT24_PUSH_SECRET` with `hash_equals` before inspecting the payload: `503` when no secret is configured, `403` for a missing/wrong/non-string secret.
+  - `erecht24_type=ping` answers `{"code":200,"message":"pong"}`; `imprint`, `privacyPolicy`, `privacyPolicySocialMedia` queue `SyncLegalTextJob` and answer `{"code":200,"message":"queued"}`; anything else answers `422`. Accepts form-encoded and JSON bodies; never logs the secret or payload.
+  - New config `erecht24.push_enabled` (env `ERECHT24_PUSH_ENABLED`, default `true`; `false` skips route registration) and `erecht24.push_rate_limit` (env `ERECHT24_PUSH_RATE_LIMIT`, default `30` requests per minute per IP), with `Erecht24Settings::pushEnabled()` and `pushRateLimit()` accessors (`InvalidConfigurationException` on invalid values).
+  - The route is not registered when the application's routes are cached (it is included in the route cache instead).
+  - New `illuminate/routing` requirement (`^12.0|^13.0`).
 - `KaiHempel\ERecht24\Erecht24Manager` and the working `ERecht24` facade for programmatic access to stored legal texts (`html()`, `has()`, `lastModified()`, `languages()`), e.g. for Inertia props. Accepts `LegalTextType` or its string value, shares language fallback with the Blade components, and throws `InvalidArgumentException` for unknown types.
 - Publishable `config/erecht24.php` configuration file (tag: `erecht24-config`) with `ERECHT24_*` environment variable mappings for API credentials, push webhook path, base URL, text languages, storage disk/directory, timeout, and queue settings.
 - `KaiHempel\ERecht24\Config\Erecht24Settings` value object providing typed, validated accessors (`apiKey()`, `pluginKey()`, `pushSecret()`, `pushPath()`, `baseUrl()`, `languages()`, `disk()`, `directory()`, `timeout()`, `queueConnection()`, `queueName()`), bound as a singleton in the container.
