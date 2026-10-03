@@ -131,6 +131,30 @@ final class Erecht24Settings
     }
 
     /**
+     * @throws InvalidConfigurationException when non-numeric or <= 0.
+     */
+    public function syncTries(): int
+    {
+        $raw = $this->config->get('erecht24.sync.tries', 3);
+
+        if (! is_numeric($raw) || (int) $raw <= 0) {
+            throw InvalidConfigurationException::forKey('sync.tries', 'must be a positive integer');
+        }
+
+        return (int) $raw;
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    public function syncBackoff(): array
+    {
+        $raw = $this->config->get('erecht24.sync.backoff', [60, 300, 900]);
+
+        return array_map(static fn (mixed $value): int => (int) $value, (array) $raw);
+    }
+
+    /**
      * @throws MissingConfigurationException when empty
      */
     private function requireString(string $key): string

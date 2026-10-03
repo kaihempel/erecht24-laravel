@@ -84,4 +84,20 @@ return [
         'name' => null,
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Sync Retry/Backoff
+    |--------------------------------------------------------------------------
+    |
+    | Tuning for the queued legal text sync job: number of attempts and the
+    | exponential backoff (in seconds) between them. The backoff array shape
+    | is not env-mapped since a single env var cannot represent it cleanly.
+    |
+    */
+
+    'sync' => [
+        'tries' => env('ERECHT24_SYNC_TRIES', 3),
+        'backoff' => [60, 300, 900],
+    ],
+
 ];
