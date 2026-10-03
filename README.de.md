@@ -374,46 +374,6 @@ Stolperfallen:
 - **Vertrauenswürdiges HTML.** Die Texte sind HTML aus der eRecht24-API und werden bewusst unescaped (`{!! !!}`) und unbereinigt ausgegeben. Leiten Sie niemals Benutzereingaben durch diese Views oder die Ausgabe der Facade.
 - **Kein ausführbarer Speicher.** Texte werden nur als `.html`-Dateien plus `.meta.json`-Metadaten gespeichert, nie als `.php` oder `.blade.php`. Gespeicherter Inhalt wird daher nie ausgeführt oder als Template kompiliert.
 
-## Umstieg von pirabyte/erecht24-laravel
-
-Dieses Paket ersetzt `pirabyte/erecht24-laravel`, ist aber kein Drop-in-Ersatz. Das alte Paket hat Texte bei Bedarf abgerufen und im Laravel-Cache gehalten; dieses Paket empfängt Pushes, synchronisiert Texte über die Queue und speichert sie als Dateien.
-
-### Schritte
-
-1. `composer remove pirabyte/erecht24-laravel` und `composer require kaihempel/erecht24-laravel`.
-2. Löschen Sie Ihre veröffentlichte `config/erecht24.php` und veröffentlichen Sie die neue (`php artisan vendor:publish --tag=erecht24-config`). Die alten Schlüssel werden ignoriert.
-3. Passen Sie die `.env` an (siehe Tabelle unten) und folgen Sie dann der [Einrichtung Schritt für Schritt](#einrichtung-schritt-für-schritt).
-4. Ersetzen Sie Namespaces, Facade-Aufrufe, Typwerte und Exceptions in Ihrem Code wie unten aufgeführt.
-
-### Entfernte und geänderte Funktionen
-
-| Alt (`pirabyte/erecht24-laravel`) | Neu (`kaihempel/erecht24-laravel`) |
-|---|---|
-| PHP ^8.2, Laravel 10–13 | PHP ^8.3, Laravel 12–13. PHP 8.2 sowie Laravel 10/11 werden nicht mehr unterstützt. |
-| Namespace `Pirabyte\ERecht24Laravel\` | Namespace `KaiHempel\ERecht24\` |
-| Wrapper um das SDK `erecht24/rechtstexte-sdk` | Das SDK wird nicht mehr verwendet; das Paket spricht die API direkt über den HTTP-Client von Laravel an. |
-| Abruf bei Bedarf: jeder Aufruf holte die Daten von der API, zwischengespeichert im Laravel-Cache | Push + Queue + Speicher: Texte liegen als Dateien auf `ERECHT24_DISK` und werden von dort gelesen. Eine öffentliche Push-URL, ein Queue-Worker (oder `QUEUE_CONNECTION=sync`) und eine Disk sind erforderlich. |
-| `ERECHT24_CACHE_ENABLED`, `ERECHT24_CACHE_STORE`, `ERECHT24_CACHE_TTL`, `ERECHT24_CACHE_PREFIX` | Entfernt. Es gibt keine Laravel-Cache-Schicht. |
-| `ERECHT24_LANGUAGE` | Entfernt. Die Sprache ergibt sich aus dem Argument `lang`, dann der Locale der Anwendung, dann dem ersten Eintrag von `ERECHT24_TEXT_LANGUAGES`. |
-| `ERECHT24_PLUGIN_KEY` optional | `ERECHT24_PLUGIN_KEY` ist Pflicht. |
-| – | Neu: `ERECHT24_PUSH_SECRET`, `ERECHT24_PUSH_PATH`, `ERECHT24_PUSH_ENABLED`, `ERECHT24_PUSH_RATE_LIMIT`, `ERECHT24_AUTHOR_MAIL`, `ERECHT24_BASE_URL`, `ERECHT24_TEXT_LANGUAGES`, `ERECHT24_DISK`, `ERECHT24_DIRECTORY`, `ERECHT24_TIMEOUT`, `ERECHT24_SYNC_TRIES` |
-| `ERecht24::imprint($lang)` | `ERecht24::html(LegalTextType::Imprint, $lang)` |
-| `ERecht24::privacyPolicy($lang)` | `ERecht24::html(LegalTextType::PrivacyPolicy, $lang)` |
-| `ERecht24::privacyPolicySocialMedia($lang)` | `ERecht24::html(LegalTextType::PrivacyPolicySocialMedia, $lang)` |
-| `ERecht24::document($type, $lang)` mit Rückgabe `LegalTextData` | `ERecht24::html()` für das gespeicherte HTML und `ERecht24::lastModified()` für den lokalen Speicherzeitpunkt. Für die vollständige Live-Antwort der API verwenden Sie `Erecht24Client::legalText()`, das ein `KaiHempel\ERecht24\DTOs\LegalText` zurückgibt. |
-| `ERecht24::html($type, $lang)` (Live-API-Aufruf, gecacht) | `ERecht24::html($type, $lang)` liest die gespeicherte Datei und gibt `null` zurück, wenn der Text noch nicht synchronisiert wurde. |
-| `ERecht24::isConfigured()` | Entfernt. Verwenden Sie `php artisan erecht24:status` oder `hasApiKey()`, `hasPluginKey()` und `hasPushSecret()` von `KaiHempel\ERecht24\Config\Erecht24Settings`. `ERecht24::has()` prüft, ob ein Text gespeichert ist. |
-| `ERecht24::clearCache($type)` | Entfernt (kein Cache). Neu abrufen mit `php artisan erecht24:sync`; eigene Caches leeren Sie über einen Listener auf `LegalTextUpdated`. |
-| DTO `LegalTextData` (`html`, `htmlDe`, `htmlEn`, `warnings`, `createdAt`, `modifiedAt`, `pushedAt`, `language`) | Entfernt. Die Facade liefert Strings. `Erecht24Client::legalText()` liefert `LegalText` mit `htmlDe`, `htmlEn`, `created`, `modified`, `pushed`, `warnings` und `html($language)`. |
-| Typwerte `imprint`, `privacy_policy`, `privacy_policy_social_media` | `imprint`, `privacyPolicy`, `privacyPolicySocialMedia` (die Namen der Enum-Cases sind unverändert). `LegalTextType::fromValue()` entfällt; verwenden Sie `from()` / `tryFrom()`. |
-| Enum `Language` mit `normalize()` | Entfernt. Sprachen sind einfache Strings (`de`, `en`); regionale Formen werden automatisch reduziert. |
-| Container-Binding `'erecht24'`, Contract `LegalTextClient`, `SdkLegalTextClient` | Entfernt. Die Facade löst `Erecht24Manager` auf; der API-Client ist `Erecht24Client`. In Tests faken Sie HTTP mit `Http::fake()`. |
-| `ERecht24Exception` | `Erecht24ApiException` (API-Fehler), `Erecht24AuthenticationException` (401), `InvalidConfigurationException`, `LegalTextStoreException` |
-| `MissingApiKeyException` | `MissingConfigurationException` (API-Schlüssel, Plugin-Schlüssel oder Push-Secret fehlt) |
-| `UnsupportedLegalTextTypeException` | `\InvalidArgumentException` |
-
-Neue Funktionen ohne Entsprechung im alten Paket: Push-Endpunkt, Sync-Job in der Queue, Artisan-Befehle (`erecht24:register`, `erecht24:status`, `erecht24:unregister`, `erecht24:sync`), Blade-Komponenten und das Event `LegalTextUpdated`.
-
 ## Entwicklung
 
 ```bash
