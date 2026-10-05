@@ -8,7 +8,7 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 
 ### Added
 
-- `Erecht24Manager::resolve()` / `ERecht24::resolve()` returning `?ResolvedLegalText` with the stored `content`, the delivered `lang`, the normalized `requestedLang` (explicit language, otherwise app locale) and `isFallback()`, so applications can set the `lang` attribute and show a fallback notice. `KaiHempel\ERecht24\View\ResolvedLegalText` is now public API and gains the optional third constructor argument `requestedLang` (backward compatible, MINOR). Never calls the API; unknown types throw `InvalidArgumentException`. (#27)
+- `Erecht24Manager::resolve()` / `ERecht24::resolve()` returning `?ResolvedLegalText` with the stored `content`, the delivered `lang`, the normalized `requestedLang` (explicit language, otherwise app locale) and `isFallback()`, so applications can set the `lang` attribute and show a fallback notice. `KaiHempel\ERecht24\View\ResolvedLegalText` is public API with the optional third constructor argument `requestedLang`. Never calls the API; unknown types throw `InvalidArgumentException`. (#27)
 - Documentation: rewritten English `README.md` and new German `README.de.md` (content-equivalent, cross-linked) covering requirements, installation, the complete `.env` reference (including `ERECHT24_AUTHOR_MAIL` and `ERECHT24_SYNC_TRIES`) plus the non-env `queue.*`/`sync.backoff` keys, quick start, step-by-step setup (`erecht24:register` → `ERECHT24_PUSH_SECRET` → `config:cache` → `erecht24:status --test-push`), push URL requirements and local tunnels, queue worker and initial `erecht24:sync`, Blade components, facade/Inertia usage, the `LegalTextUpdated` event, direct client/store usage, Artisan command reference, deployment checklist and pitfalls (config/route cache, three push clients per project), security notes and a migration guide from `pirabyte/erecht24-laravel`.
 - `tests/Unit/ReadmeEnvReferenceTest.php` guarding that every `env('ERECHT24_…')` variable read by `config/erecht24.php` is documented in both READMEs.
 - Push webhook endpoint `KaiHempel\ERecht24\Http\Controllers\PushController`, registered by the service provider as `POST {push_path}` (route name `erecht24.push`, default `/api/erecht24/push`) outside the `web` group (no session, cookies or CSRF), throttled by the `erecht24-push` rate limiter:
@@ -59,6 +59,10 @@ All notable changes to `erecht24-laravel` will be documented in this file.
   - When nothing is stored the neutral `erecht24::missing` view renders instead (with a `php artisan erecht24:sync` hint only when `app.debug` is true); invalid language configuration or store read errors never throw (read errors are logged without paths or secrets).
   - Views are registered under the `erecht24` namespace and publishable with `php artisan vendor:publish --tag=erecht24-views` (to `resources/views/vendor/erecht24`).
   - New `illuminate/view` requirement (`^12.0|^13.0`); internal `KaiHempel\ERecht24\View\LegalTextResolver` bound as a singleton.
+
+### Removed
+
+- The unused `erecht24/rechtstexte-sdk` requirement; the client talks to the eRecht24 API through Laravel's HTTP client. The package description now names the legal texts API instead of the SDK.
 
 ### Tests
 
