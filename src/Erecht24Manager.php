@@ -10,6 +10,7 @@ use KaiHempel\ERecht24\Config\Erecht24Settings;
 use KaiHempel\ERecht24\Enums\LegalTextType;
 use KaiHempel\ERecht24\Storage\LegalTextStore;
 use KaiHempel\ERecht24\View\LegalTextResolver;
+use KaiHempel\ERecht24\View\ResolvedLegalText;
 
 /**
  * Programmatic access to stored legal texts (e.g. for Inertia props). Reads the
@@ -38,6 +39,17 @@ final class Erecht24Manager
     public function has(LegalTextType|string $type, ?string $lang = null): bool
     {
         return $this->resolver->resolve($this->type($type), $lang) !== null;
+    }
+
+    /**
+     * The text that `html()` would return together with the delivered and requested language,
+     * or null if none is stored.
+     *
+     * @throws \InvalidArgumentException when $type is not a known legal text type
+     */
+    public function resolve(LegalTextType|string $type, ?string $lang = null): ?ResolvedLegalText
+    {
+        return $this->resolver->resolve($this->type($type), $lang);
     }
 
     /**
