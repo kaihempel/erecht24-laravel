@@ -34,11 +34,13 @@ final class LegalTextResolver
             return null;
         }
 
+        $requested = $this->normalize($lang) ?? $this->normalize(app()->getLocale());
+
         foreach ($candidates as $candidate) {
             $content = $this->read($type, $candidate);
 
             if ($content !== null) {
-                return new ResolvedLegalText($content, $candidate);
+                return new ResolvedLegalText($content, $candidate, $requested);
             }
         }
 

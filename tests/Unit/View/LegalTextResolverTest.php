@@ -158,3 +158,151 @@ test('path-like lang values are ignored', function (string $lang): void {
 
     expect(resolveLegalText()->resolve(LegalTextType::Imprint, $lang)?->lang)->toBe('de');
 })->with(['../x', '../../etc/passwd', '', ' ']);
+
+test('an explicit lang is reported as the requested language', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+
+    $result = resolveLegalText()->resolve(LegalTextType::Imprint, 'en');
+
+    expect($result?->lang)->toBe('en')
+        ->and($result?->requestedLang)->toBe('en');
+});
+
+test('the app locale is reported as the requested language when no lang is given', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+    app()->setLocale('en');
+
+    expect(resolveLegalText()->resolve(LegalTextType::Imprint, null)?->requestedLang)->toBe('en');
+});
+
+test('a regional app locale is reported as its primary subtag', function (string $locale): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+    app()->setLocale($locale);
+
+    $result = resolveLegalText()->resolve(LegalTextType::Imprint, null);
+
+    expect($result?->requestedLang)->toBe('en')
+        ->and($result?->lang)->toBe('en');
+})->with(['en-GB', 'en_GB']);
+
+test('the requested language is trimmed and lowercased', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+
+    expect(resolveLegalText()->resolve(LegalTextType::Imprint, ' EN ')?->requestedLang)->toBe('en');
+});
+
+test('an explicit lang wins over the app locale as the requested language', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+    app()->setLocale('en');
+
+    expect(resolveLegalText()->resolve(LegalTextType::Imprint, 'de')?->requestedLang)->toBe('de');
+});
+
+test('an unconfigured explicit lang is still reported as the requested language', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+    app()->setLocale('en');
+
+    $result = resolveLegalText()->resolve(LegalTextType::Imprint, 'fr');
+
+    expect($result?->lang)->toBe('en')
+        ->and($result?->requestedLang)->toBe('fr');
+});
+
+test('the requested language is null without an explicit lang or usable locale', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+    app()->setLocale('');
+
+    $result = resolveLegalText()->resolve(LegalTextType::Imprint, null);
+
+    expect($result?->requestedLang)->toBeNull()
+        ->and($result?->lang)->toBe('de');
+});
+
+test('only de stored with locale en is a fallback', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+    app()->setLocale('en');
+
+    $result = resolveLegalText()->resolve(LegalTextType::Imprint, null);
+
+    expect($result?->lang)->toBe('de')
+        ->and($result?->requestedLang)->toBe('en')
+        ->and($result?->isFallback())->toBeTrue();
+});
+
+test('only de stored with explicit en is a fallback', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+
+    expect(resolveLegalText()->resolve(LegalTextType::Imprint, 'en')?->isFallback())->toBeTrue();
+});
+
+test('a regional locale matching a stored language is not a fallback', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+    app()->setLocale('en-GB');
+
+    expect(resolveLegalText()->resolve(LegalTextType::Imprint, null)?->isFallback())->toBeFalse();
+});
+
+test('an explicit uppercase lang matching a stored language is not a fallback', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+    app()->setLocale('en');
+
+    $result = resolveLegalText()->resolve(LegalTextType::Imprint, 'DE');
+
+    expect($result?->lang)->toBe('de')
+        ->and($result?->isFallback())->toBeFalse();
+});
+
+test('an unconfigured explicit lang is a fallback', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+    app()->setLocale('en');
+
+    $result = resolveLegalText()->resolve(LegalTextType::Imprint, 'fr');
+
+    expect($result?->lang)->toBe('en')
+        ->and($result?->isFallback())->toBeTrue();
+});
+
+test('no requested language is never a fallback', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+    app()->setLocale('');
+
+    $result = resolveLegalText()->resolve(LegalTextType::Imprint, null);
+
+    expect($result?->requestedLang)->toBeNull()
+        ->and($result?->isFallback())->toBeFalse();
+});
+
+test('a blank explicit lang falls back to the app locale as requested language', function (string $blank): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+    app()->setLocale('en');
+
+    $result = resolveLegalText()->resolve(LegalTextType::Imprint, $blank);
+
+    expect($result?->lang)->toBe('en')
+        ->and($result?->requestedLang)->toBe('en')
+        ->and($result?->isFallback())->toBeFalse();
+})->with(['empty' => [''], 'whitespace' => ['  ']]);
+
+test('an unconfigured app locale is reported as a fallback', function (): void {
+    storeResolverText('de', '<p>DE</p>');
+    storeResolverText('en', '<p>EN</p>');
+    app()->setLocale('fr');
+
+    $result = resolveLegalText()->resolve(LegalTextType::Imprint, null);
+
+    expect($result?->lang)->toBe('de')
+        ->and($result?->requestedLang)->toBe('fr')
+        ->and($result?->isFallback())->toBeTrue();
+});

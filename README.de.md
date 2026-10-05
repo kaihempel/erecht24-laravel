@@ -225,6 +225,7 @@ Die Facade `ERecht24` (dahinter steht `KaiHempel\ERecht24\Erecht24Manager`) biet
 | Methode | Rückgabe |
 |---|---|
 | `ERecht24::html(LegalTextType\|string $type, ?string $lang = null)` | `?string` – gespeichertes HTML oder `null`, wenn nichts gespeichert ist |
+| `ERecht24::resolve(LegalTextType\|string $type, ?string $lang = null)` | `?ResolvedLegalText` – `content`, ausgelieferte Sprache `lang`, normalisierte angefragte Sprache `requestedLang` und `isFallback()` oder `null`, wenn nichts gespeichert ist |
 | `ERecht24::has(LegalTextType\|string $type, ?string $lang = null)` | `bool` |
 | `ERecht24::lastModified(LegalTextType\|string $type, ?string $lang = null)` | `?CarbonImmutable` – Zeitpunkt, zu dem der zurückgegebene Text lokal gespeichert wurde |
 | `ERecht24::languages()` | `array<int, string>` – konfigurierte Sprachen |
@@ -256,6 +257,20 @@ final class LegalPageController
 ```
 
 Geben Sie `html` in Ihrer Seitenkomponente mit `dangerouslySetInnerHTML` (React) oder `v-html` (Vue) aus und behandeln Sie `null` (Text noch nicht synchronisiert).
+
+Welche Sprache tatsächlich ausgeliefert wurde, erfahren Sie mit `ERecht24::resolve()`. Die Methode liefert ein `KaiHempel\ERecht24\View\ResolvedLegalText` mit dem gespeicherten `content`, der ausgelieferten Sprache `lang`, der normalisierten angefragten Sprache `requestedLang` (explizite Sprache, sonst die App-Locale, z. B. `en-GB` → `en`) und `isFallback()`, das `true` ist, wenn eine andere als die angefragte Sprache ausgeliefert wurde:
+
+```php
+$text = ERecht24::resolve(LegalTextType::Imprint);
+
+return Inertia::render('Legal/Show', [
+    'html' => $text?->content,
+    'lang' => $text?->lang,
+    'isFallback' => $text?->isFallback() ?? false,
+]);
+```
+
+Setzen Sie `lang` als `lang`-Attribut auf das Element, das den Text umschließt, und nutzen Sie `isFallback`, um einen Hinweis wie „Dieser Text ist nur auf Deutsch verfügbar“ anzuzeigen.
 
 ### Auf Aktualisierungen reagieren: `LegalTextUpdated`
 
