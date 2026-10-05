@@ -1,6 +1,6 @@
 {
     "name": "kaihempel/erecht24-laravel",
-    "description": "Laravel integration for the eRecht24 Rechtstexte SDK.",
+    "description": "Laravel integration for the eRecht24 legal texts API (imprint, privacy policy, social media privacy policy).",
     "type": "library",
     "license": "MIT",
     "keywords": [
@@ -13,7 +13,6 @@
     ],
     "require": {
         "php": "^8.3",
-        "erecht24/rechtstexte-sdk": "^1.0",
         "illuminate/console": "^12.0|^13.0",
         "illuminate/http": "^12.0|^13.0",
         "illuminate/routing": "^12.0|^13.0",
