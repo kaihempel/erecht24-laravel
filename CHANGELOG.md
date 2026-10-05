@@ -4,6 +4,8 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 
 ## Unreleased
 
+## 1.0.0 – 2026-10-05
+
 ### Added
 
 - `Erecht24Manager::resolve()` / `ERecht24::resolve()` returning `?ResolvedLegalText` with the stored `content`, the delivered `lang`, the normalized `requestedLang` (explicit language, otherwise app locale) and `isFallback()`, so applications can set the `lang` attribute and show a fallback notice. `KaiHempel\ERecht24\View\ResolvedLegalText` is now public API and gains the optional third constructor argument `requestedLang` (backward compatible, MINOR). Never calls the API; unknown types throw `InvalidArgumentException`. (#27)
