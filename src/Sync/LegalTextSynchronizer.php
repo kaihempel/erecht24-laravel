@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KaiHempel\ERecht24\Sync;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Log;
 use KaiHempel\ERecht24\Config\Erecht24Settings;
 use KaiHempel\ERecht24\Enums\LegalTextType;
@@ -31,6 +32,8 @@ final class LegalTextSynchronizer
     {
         $legalText = $this->client->legalText($type);
 
+        $sourceModifiedAt = $this->parseSourceModifiedAt($legalText->modified);
+
         $written = [];
         $skipped = [];
 
@@ -43,7 +46,7 @@ final class LegalTextSynchronizer
                 continue;
             }
 
-            $this->store->put($type, $language, $html);
+            $this->store->put($type, $language, $html, $sourceModifiedAt);
             $written[] = $language;
         }
 
@@ -52,6 +55,22 @@ final class LegalTextSynchronizer
         }
 
         return new SyncResult($type, $written, $skipped);
+    }
+
+    private function parseSourceModifiedAt(?string $modified): ?CarbonImmutable
+    {
+        if ($modified === null || trim($modified) === '') {
+            return null;
+        }
+
+        try {
+            return CarbonImmutable::parse($modified);
+        } catch (\Throwable) {
+            // A malformed API value must never fail the sync; the raw value is not logged.
+            Log::debug('eRecht24 source modification date could not be parsed');
+
+            return null;
+        }
     }
 
     /**
