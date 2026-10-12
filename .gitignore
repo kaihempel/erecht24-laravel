@@ -10,3 +10,6 @@
 !.env.example
 composer.lock
 
+/docs/node_modules/
+/docs/dist/
+/docs/.astro/

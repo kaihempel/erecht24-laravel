@@ -4,6 +4,10 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- Astro Starlight documentation site scaffold in `docs/` with English and German placeholder pages and a `docs` CI workflow that builds it. Docs tooling only, no package API change; `docs/` stays out of the dist archive.
+
 ### Fixed
 
 - `LegalTextSynchronizer` now persists the API's `modified` date as `source_modified_at` in the `.meta.json` files; missing or malformed values are stored as `null` and never abort the sync. (#32)

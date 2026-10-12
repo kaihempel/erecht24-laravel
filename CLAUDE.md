@@ -21,6 +21,13 @@ CI (`.github/workflows`) runs lint + analyse and the test matrix (PHP 8.3/8.4, p
 - `Http/Controllers/PushController` — invokable push webhook, registered in provider `boot()` as `POST pushPath()` named `erecht24.push` (no `web` group, `throttle:erecht24-push` via `ThrottleRequests::using`, limiter `pushRateLimit()`/min/IP) unless `pushEnabled()` is false or routes are cached. Order: no secret → 503, `hash_equals` secret fail → 403, `ping` → pong, text type → `SyncLegalTextJob::dispatch` (`queued`), else 422. Never logs secret/payload. Boot-time config in tests: `rebootWithConfig()` in `tests/TestCase.php`.
 - `DTOs/` — readonly `LegalText`, `LegalTextMetadata`, `PushClient`; `Enums/LegalTextType` (`fileSlug()` for storage names).
 
+## Documentation
+
+- Docs site lives in `docs/` (Astro Starlight, standalone Node project); content in `docs/src/content/docs/{en,de}/`.
+- Requires Node 22.12+. Preview: `cd docs && npm run dev`; build: `cd docs && npm run build`.
+- EN and DE pages must stay content-equivalent (same file names in both locales).
+- CI: `.github/workflows/docs.yml` builds the docs (no deploy yet). `docs/` is `export-ignore`d from the dist archive.
+
 ## Known gotchas
 
 - `LegalTextStore` "atomic" on non-local disks (S3) means no truncated file at the final path, not a single atomic op.
@@ -34,4 +41,4 @@ CI (`.github/workflows`) runs lint + analyse and the test matrix (PHP 8.3/8.4, p
 
 ## Status
 
-Done: 001 config, 002 API client, 003 legal text store, 004 legal text sync, 005 Artisan commands, 006 Blade views/components (`src/View`, `resources/views`), README EN/DE + deployment guide (#12; `README.md`/`README.de.md` must stay content-equivalent, env table guarded by `ReadmeEnvReferenceTest`), 007 manager resolve() / resolved language (#27).
+Done: 001 config, 002 API client, 003 legal text store, 004 legal text sync, 005 Artisan commands, 006 Blade views/components (`src/View`, `resources/views`), README EN/DE + deployment guide (#12; `README.md`/`README.de.md` must stay content-equivalent, env table guarded by `ReadmeEnvReferenceTest`), 007 manager resolve() / resolved language (#27), 008 Starlight docs scaffold (`docs/`, bilingual EN/DE, CI build).
