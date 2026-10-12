@@ -4,6 +4,10 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 
 ## Unreleased
 
+### Changed
+
+- Exclude development-only files (`.claude`, `.specify`, `specs`, `docs`, `CLAUDE.md`, `phpstan.neon`) from the Composer dist archive via `export-ignore`. (#31)
+
 ## 1.0.0 – 2026-10-05
 
 ### Added
