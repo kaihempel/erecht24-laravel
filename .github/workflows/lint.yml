@@ -31,3 +31,10 @@ jobs:
 
       - name: Run PHPStan
         run: composer analyse
+
+      - name: Check dist archive
+        run: |
+          if git archive --format=tar HEAD | tar -t | grep -E '^(\.claude|\.specify|specs|docs|tests)/|^(CLAUDE\.md|phpstan\.neon)$'; then
+            echo "Development-only files found in the dist archive" >&2
+            exit 1
+          fi
