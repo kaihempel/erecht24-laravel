@@ -23,7 +23,6 @@ Laravel-Integration für die Rechtstexte-API von [eRecht24](https://www.e-recht2
 - [Artisan-Befehle](#artisan-befehle)
 - [Deployment-Checkliste und Stolperfallen](#deployment-checkliste-und-stolperfallen)
 - [Sicherheit](#sicherheit)
-- [Umstieg von pirabyte/erecht24-laravel](#umstieg-von-pirabyteerecht24-laravel)
 - [Entwicklung](#entwicklung)
 - [Haftungsausschluss](#haftungsausschluss)
 - [Lizenz](#lizenz)

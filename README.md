@@ -23,7 +23,6 @@ Laravel integration for the [eRecht24](https://www.e-recht24.de) legal-texts API
 - [Artisan commands](#artisan-commands)
 - [Deployment checklist and pitfalls](#deployment-checklist-and-pitfalls)
 - [Security](#security)
-- [Migrating from pirabyte/erecht24-laravel](#migrating-from-pirabyteerecht24-laravel)
 - [Development](#development)
 - [Disclaimer](#disclaimer)
 - [License](#license)
