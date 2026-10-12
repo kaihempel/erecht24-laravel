@@ -4,6 +4,10 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 
 ## Unreleased
 
+### Fixed
+
+- `LegalTextSynchronizer` now persists the API's `modified` date as `source_modified_at` in the `.meta.json` files; missing or malformed values are stored as `null` and never abort the sync. (#32)
+
 ### Changed
 
 - Exclude development-only files (`.claude`, `.specify`, `specs`, `docs`, `CLAUDE.md`, `phpstan.neon`) from the Composer dist archive via `export-ignore`. (#31)
