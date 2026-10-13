@@ -6,6 +6,7 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 
 ### Added
 
+- English README content now lives on the Starlight docs site (`docs/src/content/docs/en/`), with callouts, Steps and Tabs. New `docs/scripts/check-content.mjs` validates EN pages (frontmatter, links, config variables); the EN/DE parity check treats `.md` and `.mdx` as equal. Docs only, no package API change.
 - Astro Starlight documentation site scaffold in `docs/` with English and German placeholder pages and a `docs` CI workflow that builds it. Docs tooling only, no package API change; `docs/` stays out of the dist archive.
 
 ### Fixed

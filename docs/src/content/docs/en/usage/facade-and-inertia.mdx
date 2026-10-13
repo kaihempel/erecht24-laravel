@@ -1,0 +1,91 @@
+---
+title: "Facade and Inertia"
+description: "Access stored legal texts programmatically with the ERecht24 facade, for example to pass them to Inertia pages."
+sidebar:
+  order: 2
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+The `ERecht24` facade (backed by `KaiHempel\ERecht24\Erecht24Manager`) gives programmatic access to the stored texts. It uses the same language resolution as the Blade components and never calls the API.
+
+| Method | Returns |
+|---|---|
+| `ERecht24::html(LegalTextType\|string $type, ?string $lang = null)` | `?string` – stored HTML, or `null` if none is stored |
+| `ERecht24::resolve(LegalTextType\|string $type, ?string $lang = null)` | `?ResolvedLegalText` – `content`, delivered `lang`, normalized `requestedLang` and `isFallback()`, or `null` if none is stored |
+| `ERecht24::has(LegalTextType\|string $type, ?string $lang = null)` | `bool` |
+| `ERecht24::lastModified(LegalTextType\|string $type, ?string $lang = null)` | `?CarbonImmutable` – when the returned text was stored locally |
+| `ERecht24::languages()` | `array<int, string>` – configured languages |
+
+`$type` is a `LegalTextType` case or its value (`imprint`, `privacyPolicy`, `privacyPolicySocialMedia`). Other strings throw an `\InvalidArgumentException`.
+
+Inertia controller example:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Inertia\Inertia;
+use Inertia\Response;
+use KaiHempel\ERecht24\Enums\LegalTextType;
+use KaiHempel\ERecht24\Facades\ERecht24;
+
+final class LegalPageController
+{
+    public function imprint(): Response
+    {
+        return Inertia::render('Legal/Show', [
+            'html' => ERecht24::html(LegalTextType::Imprint),
+            'updatedAt' => ERecht24::lastModified(LegalTextType::Imprint)?->toIso8601String(),
+        ]);
+    }
+}
+```
+
+Render `html` in your page component with `dangerouslySetInnerHTML` (React) or `v-html` (Vue) and handle `null` (text not synced yet).
+
+<Tabs>
+  <TabItem label="React">
+
+```tsx
+export default function Show({ html }: { html: string | null }) {
+    if (html === null) {
+        return <p>This legal text is currently not available.</p>;
+    }
+
+    return <div dangerouslySetInnerHTML={{ __html: html }} />;
+}
+```
+
+  </TabItem>
+  <TabItem label="Vue">
+
+```vue
+<script setup lang="ts">
+defineProps<{ html: string | null }>();
+</script>
+
+<template>
+    <div v-if="html !== null" v-html="html" />
+    <p v-else>This legal text is currently not available.</p>
+</template>
+```
+
+  </TabItem>
+</Tabs>
+
+To find out which language was actually delivered, use `ERecht24::resolve()`. It returns a `KaiHempel\ERecht24\View\ResolvedLegalText` with the stored `content`, the delivered `lang`, the normalized `requestedLang` (explicit language, otherwise the app locale, e.g. `en-GB` → `en`) and `isFallback()`, which is `true` when a different language than the requested one was delivered:
+
+```php
+$text = ERecht24::resolve(LegalTextType::Imprint);
+
+
+return Inertia::render('Legal/Show', [
+    'html' => $text?->content,
+    'lang' => $text?->lang,
+    'isFallback' => $text?->isFallback() ?? false,
+]);
+```
+
+Put `lang` on the `lang` attribute of the element that wraps the text, and use `isFallback` to show a notice such as "This text is only available in German".
