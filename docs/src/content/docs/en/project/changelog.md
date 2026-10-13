@@ -1,6 +1,5 @@
 ---
 title: "Changelog"
-description: "Placeholder: Changelog"
 sidebar:
   order: 3
 ---

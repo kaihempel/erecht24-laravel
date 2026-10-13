@@ -4,14 +4,12 @@ on:
   pull_request:
     paths:
       - 'docs/**'
-      - 'CHANGELOG.md'
       - '.github/workflows/docs.yml'
   push:
     branches:
       - main
     paths:
       - 'docs/**'
-      - 'CHANGELOG.md'
       - '.github/workflows/docs.yml'
 
 permissions:
@@ -28,7 +26,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: '22'
           cache: npm
           cache-dependency-path: docs/package-lock.json
 

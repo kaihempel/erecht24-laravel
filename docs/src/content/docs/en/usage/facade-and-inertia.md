@@ -1,6 +1,5 @@
 ---
 title: "Facade and Inertia"
-description: "Placeholder: Facade and Inertia"
 sidebar:
   order: 2
 ---

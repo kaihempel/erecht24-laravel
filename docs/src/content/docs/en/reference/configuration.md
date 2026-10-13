@@ -1,6 +1,5 @@
 ---
 title: "Configuration"
-description: "Placeholder: Configuration"
 sidebar:
   order: 1
 ---

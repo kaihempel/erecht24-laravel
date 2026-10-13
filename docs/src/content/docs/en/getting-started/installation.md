@@ -1,6 +1,5 @@
 ---
 title: "Installation"
-description: "Placeholder: Installation"
 sidebar:
   order: 2
 ---

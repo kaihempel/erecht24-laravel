@@ -1,6 +1,5 @@
 ---
 title: "Facade und Inertia"
-description: "Platzhalter: Facade und Inertia"
 sidebar:
   order: 2
 ---

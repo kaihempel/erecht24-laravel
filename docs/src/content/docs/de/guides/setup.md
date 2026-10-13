@@ -1,6 +1,5 @@
 ---
 title: "Einrichtung"
-description: "Platzhalter: Einrichtung"
 sidebar:
   order: 1
 ---

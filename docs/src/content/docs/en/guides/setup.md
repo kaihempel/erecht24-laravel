@@ -1,6 +1,5 @@
 ---
 title: "Setup"
-description: "Placeholder: Setup"
 sidebar:
   order: 1
 ---
