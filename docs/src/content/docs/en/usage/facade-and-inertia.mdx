@@ -80,7 +80,6 @@ To find out which language was actually delivered, use `ERecht24::resolve()`. It
 ```php
 $text = ERecht24::resolve(LegalTextType::Imprint);
 
-
 return Inertia::render('Legal/Show', [
     'html' => $text?->content,
     'lang' => $text?->lang,

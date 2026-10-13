@@ -5,7 +5,7 @@ sidebar:
   order: 1
 ---
 
-## Security
+## Secrets and verification
 
 :::danger
 - **Push secret.** Treat `ERECHT24_PUSH_SECRET` like a password. Keep it in `.env` or your secret manager and never commit it. Every environment gets its own secret through its own registration.
