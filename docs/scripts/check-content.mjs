@@ -6,6 +6,13 @@ import GithubSlugger from 'github-slugger';
 const configFile = new URL('../../config/erecht24.php', import.meta.url).pathname;
 const reserved = new Set(['project/troubleshooting', 'reference/exceptions', 'project/changelog']);
 const stripCode = (s) => s.replace(/^[ \t]*(```|~~~)[\s\S]*?^[ \t]*\1.*$/gm, '');
+const decodeAnchor = (a) => {
+	try {
+		return a === undefined ? a : decodeURIComponent(a);
+	} catch {
+		return a;
+	}
+};
 const count = (s, re) => (s.match(re) ?? []).length;
 
 const collect = (root) => {
@@ -29,7 +36,7 @@ const shape = (body) => {
 	const h = {};
 	for (let i = 1; i <= 6; i++) h[i] = count(o, new RegExp(`^#{${i}}\\s`, 'gm'));
 	const a = {};
-	for (const t of ['note', 'tip', 'caution', 'danger']) a[t] = count(o, new RegExp(`^:::${t}\\b`, 'gm'));
+	for (const t of ['note', 'tip', 'caution', 'danger']) a[t] = count(o, new RegExp(`^[ \\t]*:::${t}\\b`, 'gm'));
 	return JSON.stringify({ h, a, card: count(o, /<Card\b/g), tab: count(o, /<TabItem\b/g), steps: count(o, /<Steps\b/g) });
 };
 
@@ -69,13 +76,13 @@ for (const [locale, placeholder] of Object.entries(locales)) {
 				err(`internal link must start with /${locale}/: ${target}`);
 				continue;
 			}
-			const [pathPart, anchor] = [target.slice(locale.length + 2).split(/[?#]/)[0].replace(/\/$/, '') || 'index', target.split('#')[1]];
+			const [pathPart, anchor] = [target.slice(locale.length + 2).split(/[?#]/)[0].replace(/\/$/, '') || 'index', decodeAnchor(target.split('#')[1]?.split('?')[0])];
 			const hit = byStem.get(pathPart) ?? byStem.get(`${pathPart}/index`);
 			if (!hit) {
 				err(`broken internal link: ${target}`);
 				continue;
 			}
-			if (anchor && locale === 'de') {
+			if (anchor) {
 				const t = split(hit);
 				if (t && !slugs(t[2]).has(anchor)) err(`anchor not found on target page: ${target}`);
 			}
