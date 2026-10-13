@@ -17,9 +17,11 @@ const list = (loc) => {
 	return out.map((f) => f.replace(/\.mdx?$/, '')).sort();
 };
 
+const dupes = (l) => l.filter((f, i) => l.indexOf(f) !== i);
 const en = list('en');
 const de = list('de');
 const errors = [];
+for (const [loc, l] of [['en', en], ['de', de]]) for (const f of dupes(l)) errors.push(`duplicate page (.md and .mdx) in ${loc}: ${f}`);
 for (const f of en) if (!de.includes(f)) errors.push(`missing in de: ${f}`);
 for (const f of de) if (!en.includes(f)) errors.push(`missing in en: ${f}`);
 

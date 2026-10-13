@@ -1,0 +1,29 @@
+---
+title: "erecht24-laravel"
+description: "Laravel-Integration für die eRecht24-Rechtstexte-API: Impressum, Datenschutzerklärung und Datenschutzerklärung für soziale Medien, synchronisiert und aus lokalen Dateien ausgegeben."
+---
+
+import { CardGrid, Card, Steps } from '@astrojs/starlight/components';
+
+Laravel-Integration für die Rechtstexte-API von [eRecht24](https://www.e-recht24.de). Das Paket hält Impressum, Datenschutzerklärung und Datenschutzerklärung für soziale Medien mit Ihrem eRecht24-Projekt synchron und gibt sie aus lokalen Dateien aus:
+
+<Steps>
+
+1. eRecht24 sendet eine Push-Benachrichtigung an Ihre Anwendung, sobald sich ein Text ändert.
+2. Der Push-Endpunkt prüft das gemeinsame Secret und stellt einen Sync-Job in die Queue.
+3. Der Job holt den Text über die API und speichert ihn als reines HTML auf einer Filesystem-Disk.
+4. Blade-Komponenten oder die `ERecht24`-Facade lesen die gespeicherte Datei. Seitenaufrufe rufen nie die API auf.
+
+</Steps>
+
+<CardGrid>
+  <Card title="Erste Schritte" icon="rocket">
+    Prüfen Sie die [Voraussetzungen](/de/getting-started/requirements/), [installieren Sie das Paket](/de/getting-started/installation/) und folgen Sie dem [Schnellstart](/de/getting-started/quick-start/).
+  </Card>
+  <Card title="Anleitungen" icon="open-book">
+    [Richten Sie](/de/guides/setup/) den Push-Client ein, starten Sie den [Queue-Worker und den ersten Sync](/de/guides/queue-and-sync/) und nutzen Sie die [Deployment-Checkliste](/de/guides/deployment/).
+  </Card>
+  <Card title="Referenz" icon="document">
+    [Konfiguration](/de/reference/configuration/), [Push-Endpunkt](/de/reference/push-endpoint/) und [Artisan-Befehle](/de/reference/artisan-commands/).
+  </Card>
+</CardGrid>

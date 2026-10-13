@@ -26,7 +26,7 @@ CI (`.github/workflows`) runs lint + analyse and the test matrix (PHP 8.3/8.4, p
 - Docs site lives in `docs/` (Astro Starlight, standalone Node project); content in `docs/src/content/docs/{en,de}/`.
 - Requires Node 22.12+. Preview: `cd docs && npm run dev`; build: `cd docs && npm run build`.
 - EN and DE pages must stay content-equivalent (same file names in both locales).
-- `npm run check` (part of build) runs `scripts/check-parity.mjs` (EN/DE stems, `.md`≙`.mdx`) and `scripts/check-content.mjs` (EN page contract: frontmatter, no H1, `/en/` links resolve, all `ERECHT24_*` vars in configuration page).
+- `npm run check` (part of build) runs `scripts/check-parity.mjs` (EN/DE stems, `.md`≙`.mdx`) and `scripts/check-content.mjs` (EN + DE page contract: frontmatter, no H1, `/<locale>/` links and anchors resolve, all `ERECHT24_*` vars in configuration page; DE also matches EN heading/aside/Card/TabItem/Steps counts).
 - CI: `.github/workflows/docs.yml` builds the docs (no deploy yet). `docs/` is `export-ignore`d from the dist archive.
 
 ## Known gotchas
@@ -42,4 +42,4 @@ CI (`.github/workflows`) runs lint + analyse and the test matrix (PHP 8.3/8.4, p
 
 ## Status
 
-Done: 001 config, 002 API client, 003 legal text store, 004 legal text sync, 005 Artisan commands, 006 Blade views/components (`src/View`, `resources/views`), README EN/DE + deployment guide (#12; `README.md`/`README.de.md` must stay content-equivalent, env table guarded by `ReadmeEnvReferenceTest`), 007 manager resolve() / resolved language (#27), 008 Starlight docs scaffold (`docs/`, bilingual EN/DE, CI build), 009 English README moved into Starlight pages (DE migration pending).
+Done: 001 config, 002 API client, 003 legal text store, 004 legal text sync, 005 Artisan commands, 006 Blade views/components (`src/View`, `resources/views`), README EN/DE + deployment guide (#12; `README.md`/`README.de.md` must stay content-equivalent, env table guarded by `ReadmeEnvReferenceTest`), 007 manager resolve() / resolved language (#27), 008 Starlight docs scaffold (`docs/`, bilingual EN/DE, CI build), 009 English README moved into Starlight pages, 010 German docs translation (all DE pages except reserved placeholders).
