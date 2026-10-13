@@ -14,7 +14,7 @@ const list = (loc) => {
 		}
 	};
 	rec(base);
-	return out.sort();
+	return out.map((f) => f.replace(/\.mdx?$/, '')).sort();
 };
 
 const en = list('en');

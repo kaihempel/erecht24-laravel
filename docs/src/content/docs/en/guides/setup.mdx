@@ -1,0 +1,55 @@
+---
+title: "Setup"
+description: "Step-by-step setup: create the project, register the push client, store the secret and fetch the texts."
+sidebar:
+  order: 1
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+<Steps>
+
+1. **Create the project and API key.** In the eRecht24 Projekt Manager, create a project for the website (or open the existing one), fill in the legal texts and create an API key for it. You also need a plugin key.
+2. **Configure `.env`.** Set `ERECHT24_API_KEY`, `ERECHT24_PLUGIN_KEY` and a correct `APP_URL`. Optionally set `ERECHT24_AUTHOR_MAIL`, `ERECHT24_TEXT_LANGUAGES` and the storage settings.
+3. **Register the push client.**
+
+   ```bash
+   php artisan erecht24:register
+   ```
+
+   The command registers `APP_URL` + `ERECHT24_PUSH_PATH` (for example `https://www.example.com/api/erecht24/push`) as push client at eRecht24, or updates the existing client with the same URL. It prints:
+
+   ```text
+   Registered push client id=123
+   ERECHT24_PUSH_SECRET=...
+   ```
+
+   :::danger
+   The secret is shown only once.
+   :::
+4. **Store the secret.** Copy the printed line into `.env`. Alternatively run the command with `--write-env`, which writes `ERECHT24_PUSH_SECRET` into the application's `.env` file directly. If the file cannot be written, the secret is printed instead.
+5. **Cache the configuration.**
+
+   ```bash
+   php artisan config:cache
+   ```
+
+   :::caution
+   If you do not cache the configuration in this environment, the new value is picked up on the next request.
+   :::
+6. **Check the integration.**
+
+   ```bash
+   php artisan erecht24:status --test-push
+   ```
+
+   The report shows whether API key, plugin key and push secret are set, the configured languages, the registered push clients and the stored texts. `--test-push` asks eRecht24 to send a `ping` push to the client matching the current push URL. A successful test push confirms that eRecht24 can reach your endpoint and that the secret matches.
+7. **Fetch the texts once.**
+
+   ```bash
+   php artisan erecht24:sync
+   ```
+
+   From now on, changes in the Projekt Manager arrive by push.
+
+</Steps>

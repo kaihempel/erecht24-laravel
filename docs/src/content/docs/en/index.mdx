@@ -1,0 +1,29 @@
+---
+title: "erecht24-laravel"
+description: "Laravel integration for the eRecht24 legal-texts API: imprint, privacy policy and social-media privacy policy, synced and rendered from local files."
+---
+
+import { CardGrid, Card, Steps } from '@astrojs/starlight/components';
+
+Laravel integration for the [eRecht24](https://www.e-recht24.de) legal-texts API. The package keeps your imprint, privacy policy and social-media privacy policy in sync with your eRecht24 project and renders them from local files:
+
+<Steps>
+
+1. eRecht24 sends a push notification to your application when a text changes.
+2. The push endpoint verifies the shared secret and queues a sync job.
+3. The job fetches the text from the API and stores it as plain HTML on a filesystem disk.
+4. Blade components or the `ERecht24` facade read the stored file. Page views never call the API.
+
+</Steps>
+
+<CardGrid>
+  <Card title="Getting started" icon="rocket">
+    Check the [requirements](/en/getting-started/requirements/), [install the package](/en/getting-started/installation/) and follow the [quick start](/en/getting-started/quick-start/).
+  </Card>
+  <Card title="Guides" icon="open-book">
+    [Set up](/en/guides/setup/) the push client, run the [queue worker and initial sync](/en/guides/queue-and-sync/) and use the [deployment checklist](/en/guides/deployment/).
+  </Card>
+  <Card title="Reference" icon="document">
+    [Configuration](/en/reference/configuration/), [push endpoint](/en/reference/push-endpoint/) and [Artisan commands](/en/reference/artisan-commands/).
+  </Card>
+</CardGrid>
