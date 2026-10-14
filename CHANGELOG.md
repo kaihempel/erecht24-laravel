@@ -17,6 +17,7 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 
 ### Changed
 
+- Documentation: `README.md` and `README.de.md` slimmed down to short entry points (pitch, requirements, installation, quick start, link to the docs site, disclaimer, license); `composer.json` gains `homepage` and `support` metadata. The docs domain is still a placeholder. No package API change. (#40)
 - Exclude development-only files (`.claude`, `.specify`, `specs`, `docs`, `CLAUDE.md`, `phpstan.neon`) from the Composer dist archive via `export-ignore`. (#31)
 
 ## 1.0.0 – 2026-10-05

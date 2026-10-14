@@ -3,6 +3,12 @@
     "description": "Laravel integration for the eRecht24 legal texts API (imprint, privacy policy, social media privacy policy).",
     "type": "library",
     "license": "MIT",
+    "homepage": "https://docs.example.com",
+    "support": {
+        "docs": "https://docs.example.com",
+        "issues": "https://github.com/kaihempel/erecht24-laravel/issues",
+        "source": "https://github.com/kaihempel/erecht24-laravel"
+    },
     "keywords": [
         "laravel",
         "erecht24",
@@ -60,4 +66,3 @@
         }
     }
 }
-
