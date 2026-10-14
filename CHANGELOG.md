@@ -4,6 +4,7 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 
 ### Added
 
+- Tests: `ReadmeEnvReferenceTest` renamed to `DocsEnvReferenceTest`; it now checks that every `ERECHT24_*` variable read by `config/erecht24.php` is documented on the EN and DE configuration pages instead of the READMEs. No package API change.
 - Documentation: the changelog page of the Starlight docs site (EN/DE) now renders the root `CHANGELOG.md`; the docs workflow also runs on `CHANGELOG.md` changes. Added a highlights summary to `1.0.0`. Docs only, no package API change.
 - Documentation: exceptions reference (all eight classes with parent, throw sites and handling) and a troubleshooting page (nine Symptom → Cause → Fix entries) in English and German; the deployment pitfalls moved from the deployment guide into troubleshooting. `docs/scripts/check-content.mjs` enforces both page contracts. Docs only, no package API change.
 - German documentation: all Starlight pages under `docs/src/content/docs/de/` are translated from `README.de.md` (formal "Sie"). `docs/scripts/check-content.mjs` now validates DE pages too (`/de/` links and anchors, heading/aside/component parity with EN). Docs only, no package API change.
