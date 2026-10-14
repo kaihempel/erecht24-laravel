@@ -27,7 +27,7 @@ CI (`.github/workflows`) runs lint + analyse and the test matrix (PHP 8.3/8.4, p
 - Requires Node 22.12+. Preview: `cd docs && npm run dev`; build: `cd docs && npm run build`.
 - EN and DE pages must stay content-equivalent (same file names in both locales).
 - `npm run check` (part of build) runs `scripts/check-parity.mjs` (EN/DE stems, `.md`≙`.mdx`) and `scripts/check-content.mjs` (EN + DE page contract: frontmatter, no H1, `/<locale>/` links and anchors resolve, all `ERECHT24_*` vars in configuration page; DE also matches EN heading/aside/Card/TabItem/Steps counts; also enforces the `reference/exceptions` contract (one H2 per class in `src/Exceptions/` with Extends/Thrown when/Handling labels), the `project/troubleshooting` contract (≥9 entries with Symptom/Cause/Fix labels) and the deployment → troubleshooting link; `project/changelog` is reserved (import-only page rendering the root `CHANGELOG.md`, which has no H1 so the page keeps a single title)).
-- CI: `.github/workflows/docs.yml` builds the docs (no deploy yet). `docs/` is `export-ignore`d from the dist archive.
+- CI: `.github/workflows/docs.yml` builds the docs on PRs and pushes; pushes to `main` also deploy `docs/dist` to GitHub Pages (custom domain `erecht24-laravel.kuweh.de` via `docs/public/CNAME`). `docs/` is `export-ignore`d from the dist archive.
 
 ## Known gotchas
 
