@@ -6,7 +6,7 @@ import { defaultLocale, sections } from './sections.mjs';
 // https://astro.build/config
 export default defineConfig({
 	// TODO(#11): set real docs domain; override via DOCS_SITE_URL until then
-	site: process.env.DOCS_SITE_URL ?? 'https://example.invalid',
+	site: process.env.DOCS_SITE_URL ?? 'https://erecht24-laravel.kuweh.de',
 	redirects: { '/': `/${defaultLocale}/` },
 	// Allow the changelog page to import ../CHANGELOG.md from the repo root.
 	vite: { server: { fs: { allow: ['..'] } } },
