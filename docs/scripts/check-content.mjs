@@ -10,6 +10,35 @@ const labels = {
 	en: { exceptions: ['Extends', 'Thrown when', 'Handling'], troubleshooting: ['Symptom', 'Cause', 'Fix'] },
 	de: { exceptions: ['Erbt von', 'Wird geworfen, wenn', 'Behandlung'], troubleshooting: ['Symptom', 'Ursache', 'Lösung'] },
 };
+// Non-class H2 on the exceptions page.
+const overviewHeadings = { en: 'Hierarchy', de: 'Hierarchie' };
+
+// Required H2 entries of the troubleshooting page, per locale.
+const troubleshootingHeadings = {
+	en: [
+		'Every push returns 403',
+		'Push returns 503',
+		'Push route returns 404 after changing the push path',
+		'Pushes are accepted but texts never update',
+		'`erecht24:register` refuses the URL',
+		'`erecht24:register` refuses a fourth client',
+		'"This legal text is currently not available."',
+		'Texts differ between web servers',
+		'eRecht24 cannot reach the push URL',
+	],
+	de: [
+		'Jeder Push liefert 403',
+		'Push liefert 503',
+		'Push-Route liefert nach Änderung des Push-Pfads 404',
+		'Pushes werden angenommen, aber Texte aktualisieren sich nie',
+		'`erecht24:register` lehnt die URL ab',
+		'`erecht24:register` lehnt einen vierten Client ab',
+		'„This legal text is currently not available.“',
+		'Texte unterscheiden sich zwischen Webservern',
+		'eRecht24 erreicht die Push-URL nicht',
+	],
+};
+
 // Splits a body into H2 sections: [{ heading, text }].
 const sections = (body) =>
 	stripCode(body)
@@ -121,10 +150,15 @@ for (const [locale, placeholder] of Object.entries(locales)) {
 				if (!sec) err(`missing H2 section for \`${cls}\``);
 				else if (!inOrder(sec.text, labels[locale].exceptions, false)) err(`section \`${cls}\` must contain ${labels[locale].exceptions.map((l) => `**${l}**`).join(', ')} in order`);
 			}
+			for (const sec of found)
+				if (sec.heading !== overviewHeadings[locale] && !classes.some((cls) => sec.heading === `\`${cls}\``)) err(`stale H2 section "${sec.heading}" has no class in src/Exceptions/`);
 		}
 		if (id === 'project/troubleshooting') {
 			const found = sections(body);
 			if (found.length < 9) err(`needs at least 9 H2 entries, found ${found.length}`);
+			const expected = troubleshootingHeadings[locale];
+			for (const h of expected) if (!found.some((x) => x.heading === h)) err(`missing troubleshooting entry "${h}"`);
+			for (const x of found) if (!expected.includes(x.heading)) err(`unexpected troubleshooting entry "${x.heading}" (add it to troubleshootingHeadings)`);
 			for (const sec of found)
 				if (!inOrder(sec.text, labels[locale].troubleshooting, true)) err(`entry "${sec.heading}" must contain ${labels[locale].troubleshooting.map((l) => `**${l}:**`).join(', ')} in order`);
 		}

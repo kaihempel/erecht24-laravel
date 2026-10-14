@@ -9,7 +9,7 @@ Find your symptom, check the cause and apply the fix. For exception classes and 
 
 ## Every push returns 403
 
-**Symptom:** Your endpoint answers eRecht24's pushes with `403`, or `php artisan erecht24:status --test-push` fails (a rejected secret typically shows up as a `49x` status from eRecht24).
+**Symptom:** Your endpoint answers eRecht24's pushes with `403`, or `php artisan erecht24:status --test-push` fails.
 
 **Cause:** The secret sent by eRecht24 does not match `ERECHT24_PUSH_SECRET`. Usually the configuration is cached and still holds an old secret: with a cached configuration, changes to `.env` (including the secret written by `erecht24:register --write-env`) take effect only after the cache is rebuilt. Another cause is that the secret was re-issued, because every update of an existing client through `erecht24:register` issues a new secret, and the new value was not copied to this environment.
 

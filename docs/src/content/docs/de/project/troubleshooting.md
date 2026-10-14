@@ -9,7 +9,7 @@ Suchen Sie Ihr Symptom, prüfen Sie die Ursache und wenden Sie die Lösung an. I
 
 ## Jeder Push liefert 403
 
-**Symptom:** Ihr Endpunkt antwortet auf Pushes von eRecht24 mit `403`, oder `php artisan erecht24:status --test-push` schlägt fehl (ein abgelehntes Secret zeigt sich typischerweise als `49x`-Status von eRecht24).
+**Symptom:** Ihr Endpunkt antwortet auf Pushes von eRecht24 mit `403`, oder `php artisan erecht24:status --test-push` schlägt fehl.
 
 **Ursache:** Das von eRecht24 gesendete Secret stimmt nicht mit `ERECHT24_PUSH_SECRET` überein. Meist ist die Konfiguration gecacht und enthält noch ein altes Secret: Bei gecachter Konfiguration wirken Änderungen an der `.env` (auch das von `erecht24:register --write-env` geschriebene Secret) erst, nachdem der Cache neu aufgebaut wurde. Eine weitere Ursache ist, dass das Secret neu ausgestellt wurde, weil jede Aktualisierung eines vorhandenen Clients über `erecht24:register` ein neues Secret erzeugt, und der neue Wert nicht in diese Umgebung übernommen wurde.
 
