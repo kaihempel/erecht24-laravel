@@ -3,8 +3,9 @@
 declare(strict_types=1);
 
 /**
- * Guards the `.env` reference tables in both READMEs: every environment
- * variable read by config/erecht24.php must be documented in each of them.
+ * Guards the `.env` reference tables on the EN and DE configuration pages:
+ * every environment variable read by config/erecht24.php must be documented
+ * on each of them.
  *
  * @return array<int, string>
  */
@@ -23,8 +24,8 @@ it('finds the env variables read by the config file', function () {
         ->toContain('ERECHT24_API_KEY', 'ERECHT24_AUTHOR_MAIL', 'ERECHT24_SYNC_TRIES');
 });
 
-it('documents every config env variable in the README', function (string $readme) {
-    $path = dirname(__DIR__, 2).'/'.$readme;
+it('documents every config env variable on the configuration page', function (string $page) {
+    $path = dirname(__DIR__, 2).'/'.$page;
 
     expect($path)->toBeFile();
 
@@ -32,6 +33,9 @@ it('documents every config env variable in the README', function (string $readme
 
     foreach (erecht24ConfigEnvNames() as $name) {
         expect(str_contains($contents, '`'.$name.'`'))
-            ->toBeTrue(sprintf('%s does not document %s.', $readme, $name));
+            ->toBeTrue(sprintf('%s does not document %s.', $page, $name));
     }
-})->with(['README.md', 'README.de.md']);
+})->with([
+    'docs/src/content/docs/en/reference/configuration.md',
+    'docs/src/content/docs/de/reference/configuration.md',
+]);
