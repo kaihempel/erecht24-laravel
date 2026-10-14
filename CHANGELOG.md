@@ -1,11 +1,10 @@
-# Changelog
-
 All notable changes to `erecht24-laravel` will be documented in this file.
 
 ## Unreleased
 
 ### Added
 
+- Documentation: the changelog page of the Starlight docs site (EN/DE) now renders the root `CHANGELOG.md`; the docs workflow also runs on `CHANGELOG.md` changes. Added a highlights summary to `1.0.0`. Docs only, no package API change.
 - Documentation: exceptions reference (all eight classes with parent, throw sites and handling) and a troubleshooting page (nine Symptom → Cause → Fix entries) in English and German; the deployment pitfalls moved from the deployment guide into troubleshooting. `docs/scripts/check-content.mjs` enforces both page contracts. Docs only, no package API change.
 - German documentation: all Starlight pages under `docs/src/content/docs/de/` are translated from `README.de.md` (formal "Sie"). `docs/scripts/check-content.mjs` now validates DE pages too (`/de/` links and anchors, heading/aside/component parity with EN). Docs only, no package API change.
 - English README content now lives on the Starlight docs site (`docs/src/content/docs/en/`), with callouts, Steps and Tabs. New `docs/scripts/check-content.mjs` validates EN pages (frontmatter, links, config variables); the EN/DE parity check treats `.md` and `.mdx` as equal. Docs only, no package API change.
@@ -20,6 +19,8 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 - Exclude development-only files (`.claude`, `.specify`, `specs`, `docs`, `CLAUDE.md`, `phpstan.neon`) from the Composer dist archive via `export-ignore`. (#31)
 
 ## 1.0.0 – 2026-10-05
+
+**Highlights:** push-based sync keeps legal texts current via a secured webhook and queued jobs; ready-made Blade components (`<x-erecht24::legal-text>`) and an `ERecht24` facade for Inertia and custom views; Artisan commands to register, sync and check your setup.
 
 ### Added
 
