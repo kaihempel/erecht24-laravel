@@ -4,7 +4,28 @@ import { join, relative } from 'node:path';
 import GithubSlugger from 'github-slugger';
 
 const configFile = new URL('../../config/erecht24.php', import.meta.url).pathname;
-const reserved = new Set(['project/troubleshooting', 'reference/exceptions', 'project/changelog']);
+const exceptionsDir = new URL('../../src/Exceptions/', import.meta.url).pathname;
+const reserved = new Set(['project/changelog']);
+const labels = {
+	en: { exceptions: ['Extends', 'Thrown when', 'Handling'], troubleshooting: ['Symptom', 'Cause', 'Fix'] },
+	de: { exceptions: ['Erbt von', 'Wird geworfen, wenn', 'Behandlung'], troubleshooting: ['Symptom', 'Ursache', 'Lösung'] },
+};
+// Splits a body into H2 sections: [{ heading, text }].
+const sections = (body) =>
+	stripCode(body)
+		.split(/^## /m)
+		.slice(1)
+		.map((chunk) => ({ heading: chunk.split('\n')[0].trim(), text: chunk }));
+// True when the bold labels appear in the given order (each as `**Label**` or `**Label:**`).
+const inOrder = (text, names, colon) => {
+	let at = -1;
+	for (const n of names) {
+		const i = text.indexOf(colon ? `**${n}:**` : `**${n}**`, at + 1);
+		if (i === -1) return false;
+		at = i;
+	}
+	return true;
+};
 const stripCode = (s) => s.replace(/^[ \t]*(```|~~~)[\s\S]*?^[ \t]*\1.*$/gm, '');
 const decodeAnchor = (a) => {
 	try {
@@ -92,6 +113,22 @@ for (const [locale, placeholder] of Object.entries(locales)) {
 		if (id === 'usage/facade-and-inertia' && !(/import\s*\{[^}]*\bTabs\b/.test(body) && /<Tabs[\s>]/.test(body)))
 			err('must import and use Tabs');
 		if (id === 'index' && !/<(CardGrid|Steps)>/.test(body)) err('must use CardGrid or Steps');
+		if (id === 'reference/exceptions') {
+			const found = sections(body);
+			const classes = readdirSync(exceptionsDir).filter((f) => f.endsWith('.php')).map((f) => f.replace(/\.php$/, ''));
+			for (const cls of classes) {
+				const sec = found.find((x) => x.heading === `\`${cls}\``);
+				if (!sec) err(`missing H2 section for \`${cls}\``);
+				else if (!inOrder(sec.text, labels[locale].exceptions, false)) err(`section \`${cls}\` must contain ${labels[locale].exceptions.map((l) => `**${l}**`).join(', ')} in order`);
+			}
+		}
+		if (id === 'project/troubleshooting') {
+			const found = sections(body);
+			if (found.length < 9) err(`needs at least 9 H2 entries, found ${found.length}`);
+			for (const sec of found)
+				if (!inOrder(sec.text, labels[locale].troubleshooting, true)) err(`entry "${sec.heading}" must contain ${labels[locale].troubleshooting.map((l) => `**${l}:**`).join(', ')} in order`);
+		}
+		if (id === 'guides/deployment' && !outside.includes(`](/${locale}/project/troubleshooting/`)) err('must link to the troubleshooting page');
 		if (id === 'reference/configuration') {
 			const names = new Set(readFileSync(configFile, 'utf8').match(/ERECHT24_[A-Z_]+/g) ?? []);
 			for (const n of names) if (!body.includes(`\`${n}\``)) err(`missing env variable \`${n}\``);
