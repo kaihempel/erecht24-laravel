@@ -50,7 +50,7 @@ Lassen Sie einen Queue-Worker laufen (`php artisan queue:work`), damit Push-Bena
 
 ## Dokumentation
 
-Die vollständige Dokumentation (Einrichtung, Konfiguration, Verwendung, Artisan-Befehle, Push-Endpunkt, Deployment, Sicherheit, Fehlerbehebung) finden Sie auf der Dokumentationsseite: **<https://docs.example.com/de/>**
+Die vollständige Dokumentation (Einrichtung, Konfiguration, Verwendung, Artisan-Befehle, Push-Endpunkt, Deployment, Sicherheit, Fehlerbehebung) finden Sie auf der Dokumentationsseite: **<https://erecht24-laravel.kuweh.de/de/>**
 
 ## Haftungsausschluss
 

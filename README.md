@@ -50,7 +50,7 @@ Keep a queue worker running (`php artisan queue:work`) so that push notification
 
 ## Documentation
 
-The full documentation (setup, configuration, usage, Artisan commands, push endpoint, deployment, security, troubleshooting) lives on the documentation site: **<https://docs.example.com/en/>**
+The full documentation (setup, configuration, usage, Artisan commands, push endpoint, deployment, security, troubleshooting) lives on the documentation site: **<https://erecht24-laravel.kuweh.de/en/>**
 
 ## Disclaimer
 
