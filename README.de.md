@@ -1,5 +1,7 @@
 # erecht24-laravel
 
+[![Latest Stable Version](http://poser.pugx.org/kaihempel/erecht24-laravel/v)](https://packagist.org/packages/kaihempel/erecht24-laravel) [![Total Downloads](http://poser.pugx.org/kaihempel/erecht24-laravel/downloads)](https://packagist.org/packages/kaihempel/erecht24-laravel)  [![License](http://poser.pugx.org/kaihempel/erecht24-laravel/license)](https://packagist.org/packages/kaihempel/erecht24-laravel) [![PHP Version Require](http://poser.pugx.org/kaihempel/erecht24-laravel/require/php)](https://packagist.org/packages/kaihempel/erecht24-laravel)
+
 [English](README.md) | **Deutsch**
 
 Laravel-Integration für die Rechtstexte-API von [eRecht24](https://www.e-recht24.de). Das Paket hält Impressum, Datenschutzerklärung und Datenschutzerklärung für soziale Medien mit Ihrem eRecht24-Projekt synchron und gibt sie aus lokalen Dateien aus:

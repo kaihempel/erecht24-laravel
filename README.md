@@ -1,5 +1,7 @@
 # erecht24-laravel
 
+[![Latest Stable Version](http://poser.pugx.org/kaihempel/erecht24-laravel/v)](https://packagist.org/packages/kaihempel/erecht24-laravel) [![Total Downloads](http://poser.pugx.org/kaihempel/erecht24-laravel/downloads)](https://packagist.org/packages/kaihempel/erecht24-laravel)  [![License](http://poser.pugx.org/kaihempel/erecht24-laravel/license)](https://packagist.org/packages/kaihempel/erecht24-laravel) [![PHP Version Require](http://poser.pugx.org/kaihempel/erecht24-laravel/require/php)](https://packagist.org/packages/kaihempel/erecht24-laravel)
+
 **English** | [Deutsch](README.de.md)
 
 Laravel integration for the [eRecht24](https://www.e-recht24.de) legal-texts API. The package keeps your imprint, privacy policy and social-media privacy policy in sync with your eRecht24 project and renders them from local files:
