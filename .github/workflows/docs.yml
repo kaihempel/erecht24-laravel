@@ -100,15 +100,7 @@ jobs:
             && ln -s ${{ secrets.DEPLOY_PATH }}/storage \
                       ${{ secrets.DEPLOY_PATH }}/releases/${{ env.BUILD_NUMBER }}/storage
           "
-
-      # ── Laravel post-deploy commands ──────────────────────────────────────
-      - name: Run migrations
-        run: |
-          ssh target "
-            cd ${{ secrets.DEPLOY_PATH }}/releases/${{ env.BUILD_NUMBER }} \
-            && php artisan migrate --force
-          "
-
+          
       # ── Atomic symlink swap ───────────────────────────────────────────────
       - name: Switch 'current' symlink to new release
         run: |
