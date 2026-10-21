@@ -32,8 +32,8 @@ jobs:
       - name: Create build.zip
         run: zip -r build.zip docs/dist
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: deploy-artifacts
           path: build.zip
