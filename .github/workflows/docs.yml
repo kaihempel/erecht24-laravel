@@ -46,24 +46,89 @@ jobs:
         with:
           path: docs/dist
 
+  # ──────────────────────────────────────────────────────────────────────────
+  # 2. Deploy
+  # ──────────────────────────────────────────────────────────────────────────
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: build
+    name: Deploy to Server
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    concurrency:
-      group: pages
-      cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: https://erecht24-laravel.kuweh.de/en/
-    steps:
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+    needs: build
 
-      - name: Check deployed site
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: deploy-artifacts
+
+      # ── SSH setup ─────────────────────────────────────────────────────────
+      - name: Configure SSH
         run: |
-          curl -fsS --retry 5 --retry-delay 10 --retry-all-errors -o /dev/null https://erecht24-laravel.kuweh.de/en/
-          curl -fsS --retry 5 --retry-delay 10 --retry-all-errors -o /dev/null https://erecht24-laravel.kuweh.de/de/
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+          cat >> ~/.ssh/config <<EOF
+          Host target
+            HostName ${{ secrets.SERVER_HOST }}
+            User ${{ secrets.SSH_USER }}
+            IdentityFile ~/.ssh/deploy_key
+            StrictHostKeyChecking accept-new
+          EOF
+
+      # ── Prepare release directory on server ───────────────────────────────
+      - name: Create release directory
+        run: |
+          ssh target "mkdir -p ${{ secrets.DEPLOY_PATH }}/releases/${{ env.BUILD_NUMBER }}"
+
+      # ── Upload & extract build ────────────────────────────────────────────
+      - name: Upload build to server
+        run: |
+          scp github-pages.zip target:${{ secrets.DEPLOY_PATH }}/releases/${{ env.BUILD_NUMBER }}/
+
+      - name: Extract build on server
+        run: |
+          ssh target "
+            cd ${{ secrets.DEPLOY_PATH }}/releases/${{ env.BUILD_NUMBER }} \
+            && unzip -o github-pages.zip \
+            && rm github-pages.zip
+          "
+
+      # ── Link shared storage into release ──────────────────────────────────
+      - name: Symlink shared storage into release
+        run: |
+          ssh target "
+            rm -rf ${{ secrets.DEPLOY_PATH }}/releases/${{ env.BUILD_NUMBER }}/storage \
+            && ln -s ${{ secrets.DEPLOY_PATH }}/storage \
+                      ${{ secrets.DEPLOY_PATH }}/releases/${{ env.BUILD_NUMBER }}/storage
+          "
+
+      # ── Laravel post-deploy commands ──────────────────────────────────────
+      - name: Run migrations
+        run: |
+          ssh target "
+            cd ${{ secrets.DEPLOY_PATH }}/releases/${{ env.BUILD_NUMBER }} \
+            && php artisan migrate --force
+          "
+
+      # ── Atomic symlink swap ───────────────────────────────────────────────
+      - name: Switch 'current' symlink to new release
+        run: |
+          ssh target "
+            ln -sfn ${{ secrets.DEPLOY_PATH }}/releases/${{ env.BUILD_NUMBER }} \
+                     ${{ secrets.DEPLOY_PATH }}/current
+          "
+
+      # ── Cleanup old releases (keep last 5) ────────────────────────────────
+      - name: Remove old releases
+        run: |
+          ssh target "
+            cd ${{ secrets.DEPLOY_PATH }}/releases \
+            && ls -1d */ | sort -n | head -n -5 | xargs -r rm -rf
+          "
+
+      # ── Cleanup SSH key ───────────────────────────────────────────────────
+      - name: Cleanup SSH credentials
+        if: always()
+        run: rm -rf ~/.ssh/deploy_key
