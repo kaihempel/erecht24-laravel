@@ -92,15 +92,15 @@ jobs:
             && rm build.zip
           "
 
-      # ── Link shared storage into release ──────────────────────────────────
-      - name: Symlink shared storage into release
+      - name: Move files to root of release directory
         run: |
           ssh target "
-            rm -rf ${{ secrets.DEPLOY_PATH }}/releases/${{ env.BUILD_NUMBER }}/storage \
-            && ln -s ${{ secrets.DEPLOY_PATH }}/storage \
-                      ${{ secrets.DEPLOY_PATH }}/releases/${{ env.BUILD_NUMBER }}/storage
-          "
-          
+            cd ${{ secrets.DEPLOY_PATH }}/releases/${{ env.BUILD_NUMBER }} \
+            && mkdir public \
+            && mv docs/dist/* public/ \
+            && rm -rf docs
+          "      
+
       # ── Atomic symlink swap ───────────────────────────────────────────────
       - name: Switch 'current' symlink to new release
         run: |
