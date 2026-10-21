@@ -33,7 +33,7 @@ jobs:
         run: zip -r build.zip docs/dist
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           name: deploy-artifacts
           path: build.zip
