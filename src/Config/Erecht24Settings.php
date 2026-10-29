@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KaiHempel\ERecht24\Config;
 
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
+use KaiHempel\ERecht24\Enums\SealVariant;
 use KaiHempel\ERecht24\Exceptions\InvalidConfigurationException;
 use KaiHempel\ERecht24\Exceptions\MissingConfigurationException;
 
@@ -185,6 +186,26 @@ final class Erecht24Settings
         return (int) $raw;
     }
 
+    /**
+     * Seal variant shown for the imprint, or null when none is configured.
+     *
+     * @throws InvalidConfigurationException when the value is not a known seal variant.
+     */
+    public function imprintSeal(): ?SealVariant
+    {
+        return $this->seal('imprint');
+    }
+
+    /**
+     * Seal variant shown for the privacy policy, or null when none is configured.
+     *
+     * @throws InvalidConfigurationException when the value is not a known seal variant.
+     */
+    public function privacyPolicySeal(): ?SealVariant
+    {
+        return $this->seal('privacy_policy');
+    }
+
     public function queueConnection(): ?string
     {
         $value = $this->config->get('erecht24.queue.connection');
@@ -245,6 +266,31 @@ final class Erecht24Settings
     public function hasPushSecret(): bool
     {
         return $this->hasString('push_secret');
+    }
+
+    private function seal(string $key): ?SealVariant
+    {
+        $raw = $this->config->get('erecht24.seals.'.$key);
+        $value = is_scalar($raw) ? strtolower(trim((string) $raw)) : '';
+
+        if ($value === '') {
+            return null;
+        }
+
+        $variant = SealVariant::tryFrom($value);
+
+        if ($variant === null) {
+            throw InvalidConfigurationException::forKey(
+                'seals.'.$key,
+                sprintf(
+                    'unsupported seal [%s], expected one of: %s',
+                    $value,
+                    implode(', ', array_column(SealVariant::cases(), 'value')),
+                ),
+            );
+        }
+
+        return $variant;
     }
 
     private function hasString(string $key): bool

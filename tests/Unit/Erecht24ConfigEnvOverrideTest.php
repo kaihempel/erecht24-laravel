@@ -28,6 +28,22 @@ it('overrides erecht24 config via env vars', function (string $envKey, string $c
     unset($_ENV[$envKey], $_SERVER[$envKey]);
 })->with('env_overrides');
 
+it('overrides the seal config via env vars', function (string $envKey, string $configKey) {
+    putenv("{$envKey}=dark-vertical");
+    $_ENV[$envKey] = 'dark-vertical';
+    $_SERVER[$envKey] = 'dark-vertical';
+
+    $config = require __DIR__.'/../../config/erecht24.php';
+
+    expect($config['seals'][$configKey])->toBe('dark-vertical');
+
+    putenv($envKey);
+    unset($_ENV[$envKey], $_SERVER[$envKey]);
+})->with([
+    ['ERECHT24_IMPRINT_SEAL', 'imprint'],
+    ['ERECHT24_PRIVACY_POLICY_SEAL', 'privacy_policy'],
+]);
+
 it('maps ERECHT24_PUSH_ENABLED=false to a disabled push endpoint', function () {
     putenv('ERECHT24_PUSH_ENABLED=false');
     $_ENV['ERECHT24_PUSH_ENABLED'] = 'false';
