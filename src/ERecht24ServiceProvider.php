@@ -86,6 +86,10 @@ class ERecht24ServiceProvider extends ServiceProvider
             __DIR__.'/../resources/views' => resource_path('views/vendor/erecht24'),
         ], 'erecht24-views');
 
+        $this->publishes([
+            __DIR__.'/../public' => public_path('vendor/erecht24'),
+        ], 'erecht24-assets');
+
         $this->registerPushRateLimiter();
         $this->registerPushRoute();
 
