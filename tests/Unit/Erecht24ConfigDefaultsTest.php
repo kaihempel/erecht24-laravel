@@ -11,5 +11,7 @@ it('ships documented default config values', function () {
         ->and(config('erecht24.disk'))->toBe('local')
         ->and(config('erecht24.directory'))->toBe('erecht24')
         ->and(config('erecht24.timeout'))->toBe(10)
-        ->and(config('erecht24.plugin_key'))->toBeEmpty();
+        ->and(config('erecht24.plugin_key'))->toBeEmpty()
+        ->and(config('erecht24.seals.imprint'))->toBeNull()
+        ->and(config('erecht24.seals.privacy_policy'))->toBeNull();
 });

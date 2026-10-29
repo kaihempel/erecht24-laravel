@@ -16,6 +16,8 @@ sidebar:
 | `ERECHT24_PUSH_ENABLED` | `true` | Set to `false` to not register the push route. |
 | `ERECHT24_PUSH_RATE_LIMIT` | `30` | Maximum push requests per minute per IP address. Must be a positive integer. |
 | `ERECHT24_AUTHOR_MAIL` | – | Optional contact email sent to eRecht24 when registering the push client. |
+| `ERECHT24_IMPRINT_SEAL` | – | Optional trust seal variant for the imprint: `light-horizontal`, `light-vertical`, `dark-horizontal` or `dark-vertical`. Unset shows no seal; other values throw an `InvalidConfigurationException` when read. |
+| `ERECHT24_PRIVACY_POLICY_SEAL` | – | Same as above, for the privacy policy. |
 | `ERECHT24_BASE_URL` | `https://api.e-recht24.de/v2` | API base URL. |
 | `ERECHT24_TEXT_LANGUAGES` | `de,en` | Comma-separated languages to sync and serve. Only `de` and `en` are supported. The first entry is the fallback language. |
 | `ERECHT24_DISK` | `local` | Filesystem disk for the stored texts. |

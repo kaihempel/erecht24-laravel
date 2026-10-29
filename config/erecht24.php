@@ -97,6 +97,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Trust Seals
+    |--------------------------------------------------------------------------
+    |
+    | Which eRecht24 trust seal variant to show for the imprint and the
+    | privacy policy. Allowed values: light-horizontal, light-vertical,
+    | dark-horizontal, dark-vertical. Unset or empty shows no seal; an
+    | unsupported value throws an InvalidConfigurationException when read.
+    |
+    */
+
+    'seals' => [
+        'imprint' => env('ERECHT24_IMPRINT_SEAL'),
+        'privacy_policy' => env('ERECHT24_PRIVACY_POLICY_SEAL'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Queue
     |--------------------------------------------------------------------------
     |
