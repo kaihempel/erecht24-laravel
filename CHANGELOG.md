@@ -4,6 +4,7 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 
 ### Added
 
+- Trust seal rendering: when `erecht24.seals.imprint` / `erecht24.seals.privacy_policy` is set, `<x-erecht24::imprint>`, `<x-erecht24::privacy-policy>` and `<x-erecht24::legal-text>` render the seal centered below the text (never for the social-media privacy policy or the missing placeholder). New `SealResolver` and `LegalTextSeal`; the shared `components/legal-text` view receives an optional `$seal`. Output without seal configuration is unchanged; component constructors are unchanged. (#61)
 - Trust seal settings: `SealVariant` enum, `erecht24.seals.imprint` / `erecht24.seals.privacy_policy` config (`ERECHT24_IMPRINT_SEAL`, `ERECHT24_PRIVACY_POLICY_SEAL`) and `Erecht24Settings::imprintSeal()` / `privacyPolicySeal()`. Nothing is shown unless configured; rendering follows separately. (#59)
 - Tests: `ReadmeEnvReferenceTest` renamed to `DocsEnvReferenceTest`; it now checks that every `ERECHT24_*` variable read by `config/erecht24.php` is documented on the EN and DE configuration pages instead of the READMEs. No package API change.
 - Documentation: the changelog page of the Starlight docs site (EN/DE) now renders the root `CHANGELOG.md`; the docs workflow also runs on `CHANGELOG.md` changes. Added a highlights summary to `1.0.0`. Docs only, no package API change.

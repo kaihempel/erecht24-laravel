@@ -24,6 +24,7 @@ use KaiHempel\ERecht24\Storage\LegalTextStore;
 use KaiHempel\ERecht24\Support\EnvFileWriter;
 use KaiHempel\ERecht24\Sync\LegalTextSynchronizer;
 use KaiHempel\ERecht24\View\LegalTextResolver;
+use KaiHempel\ERecht24\View\SealResolver;
 
 class ERecht24ServiceProvider extends ServiceProvider
 {
@@ -60,6 +61,10 @@ class ERecht24ServiceProvider extends ServiceProvider
 
         $this->app->singleton(LegalTextResolver::class, fn ($app) => new LegalTextResolver(
             $app->make(LegalTextStore::class),
+            $app->make(Erecht24Settings::class),
+        ));
+
+        $this->app->singleton(SealResolver::class, fn ($app) => new SealResolver(
             $app->make(Erecht24Settings::class),
         ));
 

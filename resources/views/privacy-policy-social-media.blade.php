@@ -2,5 +2,6 @@
     'content' => $content,
     'type' => $type,
     'lang' => $lang,
+    'seal' => $seal ?? null,
     'attributes' => $attributes,
 ])

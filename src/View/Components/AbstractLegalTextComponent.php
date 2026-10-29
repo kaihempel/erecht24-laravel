@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\View;
 use Illuminate\View\Component;
 use KaiHempel\ERecht24\Enums\LegalTextType;
 use KaiHempel\ERecht24\View\LegalTextResolver;
+use KaiHempel\ERecht24\View\LegalTextSeal;
+use KaiHempel\ERecht24\View\SealResolver;
 
 /**
  * Shared rendering for all legal text components: resolve a stored text (never
@@ -28,7 +30,7 @@ abstract class AbstractLegalTextComponent extends Component
     /**
      * Builds the view that shows the resolved text.
      *
-     * @param  array{content: string, type: LegalTextType, lang: string}  $data
+     * @param  array{content: string, type: LegalTextType, lang: string, seal: ?LegalTextSeal}  $data
      */
     abstract protected function contentView(array $data): ViewContract;
 
@@ -45,6 +47,7 @@ abstract class AbstractLegalTextComponent extends Component
             'content' => $resolved->content,
             'type' => $type,
             'lang' => $resolved->lang,
+            'seal' => app(SealResolver::class)->for($type, $resolved->lang),
         ]);
     }
 }

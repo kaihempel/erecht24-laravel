@@ -23,13 +23,22 @@ sidebar:
 
 **Fehlender Text:** Ist für den Typ kein Text gespeichert, rendert die View `erecht24::missing` einen kurzen neutralen Hinweis („This legal text is currently not available.“), statt eine Exception auszulösen. Mit `APP_DEBUG=true` zeigt sie zusätzlich den Hinweis, `php artisan erecht24:sync` auszuführen. Lesefehler werden geloggt und wie ein fehlender Text behandelt.
 
+## Vertrauenssiegel
+
+Wenn Sie `ERECHT24_IMPRINT_SEAL` und/oder `ERECHT24_PRIVACY_POLICY_SEAL` setzen (siehe [Konfiguration](/de/reference/configuration/)), geben die Komponenten für Impressum und Datenschutzerklärung das eRecht24-Siegel zentriert direkt unter dem Text aus, innerhalb des umschließenden `<div>`. Die generische Komponente `legal-text` verhält sich für diese beiden Typen genauso.
+
+- Das Bild wird aus `vendor/erecht24/` geladen (`impressum-siegel-<variant>-large.webp` bzw. `datenschutz-siegel-<variant>-large.webp`); die Bilddateien müssen Sie selbst veröffentlichen. Die URL wird auch ausgegeben, wenn die Datei fehlt.
+- Es wird 300 px breit (horizontale Varianten) bzw. 180 px breit (vertikale Varianten) dargestellt, nie breiter als sein Container, mit `width`-/`height`-Attributen und `loading="lazy"`. Das Styling ist inline, es wird kein CSS-Framework benötigt.
+- Der `alt`-Text ist deutsch oder englisch, passend zur ausgegebenen Sprache.
+- Die Social-Media-Datenschutzerklärung und der Platzhalter `missing` zeigen nie ein Siegel. Ohne Siegel-Konfiguration bleibt die Ausgabe unverändert.
+
 ## Views anpassen
 
 ```bash
 php artisan vendor:publish --tag=erecht24-views
 ```
 
-Die Views werden nach `resources/views/vendor/erecht24/` kopiert und haben dann Vorrang vor den Paket-Views: `components/legal-text`, `imprint`, `privacy-policy`, `privacy-policy-social-media` und `missing`. Die Inhalts-Views erhalten `$content`, `$type` (ein `LegalTextType`) und `$lang`. Den englischen Hinweistext in `missing` können Sie hier übersetzen.
+Die Views werden nach `resources/views/vendor/erecht24/` kopiert und haben dann Vorrang vor den Paket-Views: `components/legal-text`, `imprint`, `privacy-policy`, `privacy-policy-social-media` und `missing`. Die Inhalts-Views erhalten `$content`, `$type` (ein `LegalTextType`), `$lang` und optional `$seal` (ein `LegalTextSeal` oder `null`; Views, die es ignorieren, funktionieren weiter). Den englischen Hinweistext in `missing` können Sie hier übersetzen.
 
 :::danger
 Lassen Sie `{!! $content !!}` unescaped, sonst erscheint das HTML als Text. Die Texte sind vertrauenswürdiges HTML aus der eRecht24-API; leiten Sie niemals nutzergenerierte Inhalte durch diese Views.
