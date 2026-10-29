@@ -6,6 +6,11 @@ namespace KaiHempel\ERecht24\Enums;
 
 enum SealVariant: string
 {
+    /**
+     * Directory below the application's public path the `erecht24-assets` tag publishes to.
+     */
+    public const PUBLIC_DIRECTORY = 'vendor/erecht24';
+
     case LightHorizontal = 'light-horizontal';
     case LightVertical = 'light-vertical';
     case DarkHorizontal = 'dark-horizontal';
@@ -49,5 +54,15 @@ enum SealVariant: string
     public function fileSuffix(): string
     {
         return $this->value.'-large';
+    }
+
+    /**
+     * File name of the shipped WebP for a document, e.g. `impressum-siegel-light-horizontal-large.webp`.
+     *
+     * @param  'impressum'|'datenschutz'  $document
+     */
+    public function fileName(string $document): string
+    {
+        return "{$document}-siegel-{$this->fileSuffix()}.webp";
     }
 }

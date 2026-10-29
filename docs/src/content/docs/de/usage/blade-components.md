@@ -34,3 +34,11 @@ Die Views werden nach `resources/views/vendor/erecht24/` kopiert und haben dann 
 :::danger
 Lassen Sie `{!! $content !!}` unescaped, sonst erscheint das HTML als Text. Die Texte sind vertrauenswürdiges HTML aus der eRecht24-API; leiten Sie niemals nutzergenerierte Inhalte durch diese Views.
 :::
+
+## Siegel
+
+```bash
+php artisan vendor:publish --tag=erecht24-assets
+```
+
+Die Siegel-Bilder (WebP) werden nach `public/vendor/erecht24/` kopiert, zum Beispiel `impressum-siegel-light-horizontal-large.webp` und `datenschutz-siegel-dark-vertical-large.webp`. Sie werden nur benötigt, wenn Sie `ERECHT24_IMPRINT_SEAL` oder `ERECHT24_PRIVACY_POLICY_SEAL` konfigurieren.
