@@ -17,6 +17,7 @@ use KaiHempel\ERecht24\Console\RegisterPushClientCommand;
 use KaiHempel\ERecht24\Console\StatusCommand;
 use KaiHempel\ERecht24\Console\SyncLegalTextCommand;
 use KaiHempel\ERecht24\Console\UnregisterPushClientCommand;
+use KaiHempel\ERecht24\Enums\SealVariant;
 use KaiHempel\ERecht24\Http\Controllers\PushController;
 use KaiHempel\ERecht24\Registration\PushClientRegistrar;
 use KaiHempel\ERecht24\Status\StatusInspector;
@@ -87,7 +88,7 @@ class ERecht24ServiceProvider extends ServiceProvider
         ], 'erecht24-views');
 
         $this->publishes([
-            __DIR__.'/../public' => public_path('vendor/erecht24'),
+            __DIR__.'/../public' => public_path(SealVariant::PUBLIC_DIRECTORY),
         ], 'erecht24-assets');
 
         $this->registerPushRateLimiter();

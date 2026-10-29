@@ -34,3 +34,11 @@ The views are copied to `resources/views/vendor/erecht24/` and take precedence o
 :::danger
 Keep `{!! $content !!}` unescaped, otherwise the HTML is shown as text. The texts are trusted HTML from the eRecht24 API; never route user-supplied content through these views.
 :::
+
+## Trust seals
+
+```bash
+php artisan vendor:publish --tag=erecht24-assets
+```
+
+The seal images (WebP) are copied to `public/vendor/erecht24/`, for example `impressum-siegel-light-horizontal-large.webp` and `datenschutz-siegel-dark-vertical-large.webp`. They are only needed if you configure `ERECHT24_IMPRINT_SEAL` or `ERECHT24_PRIVACY_POLICY_SEAL`.
