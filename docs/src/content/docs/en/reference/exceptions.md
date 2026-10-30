@@ -39,9 +39,9 @@ Only `Erecht24AuthenticationException` extends `Erecht24ApiException`. All other
 
 **Extends**: `\RuntimeException` (final).
 
-**Thrown when**: a configuration value is present but invalid: `push_enabled` (not a boolean), `push_rate_limit`, `timeout` or `sync.tries` (not a positive integer), or `text_languages` (empty, or containing a language other than `de` and `en`). The message names the offending key and the reason.
+**Thrown when**: a configuration value is present but invalid: `push_enabled` (not a boolean), `push_rate_limit`, `timeout` or `sync.tries` (not a positive integer), `text_languages` (empty, or containing a language other than `de` and `en`), or `seals.imprint` / `seals.privacy_policy` (not a known seal variant). The message names the offending key and the reason.
 
-**Handling**: correct the value in your `.env` file or `config/erecht24.php`. The register and unregister commands and `erecht24:status` catch it and report it. The Blade components and the manager resolve languages through `LegalTextResolver`, which swallows this exception and falls back instead of failing.
+**Handling**: correct the value in your `.env` file or `config/erecht24.php`. The register and unregister commands and `erecht24:status` catch it and report it. The Blade components and the manager resolve languages through `LegalTextResolver`, which swallows this exception and falls back instead of failing. An invalid seal setting is logged as a warning by the components, which then render the text without seal.
 
 ## `LegalTextStoreException`
 

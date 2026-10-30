@@ -16,7 +16,7 @@ sidebar:
 | `ERECHT24_PUSH_ENABLED` | `true` | Mit `false` wird die Push-Route nicht registriert. |
 | `ERECHT24_PUSH_RATE_LIMIT` | `30` | Maximale Anzahl Push-Anfragen pro Minute und IP-Adresse. Muss eine positive Ganzzahl sein. |
 | `ERECHT24_AUTHOR_MAIL` | – | Optionale Kontakt-E-Mail, die bei der Registrierung des Push-Clients an eRecht24 übermittelt wird. |
-| `ERECHT24_IMPRINT_SEAL` | – | Optionale Siegel-Variante für das Impressum: `light-horizontal`, `light-vertical`, `dark-horizontal` oder `dark-vertical`. Nicht gesetzt zeigt kein Siegel; andere Werte werfen beim Lesen eine `InvalidConfigurationException`. |
+| `ERECHT24_IMPRINT_SEAL` | – | Optionale Siegel-Variante für das Impressum: `light-horizontal`, `light-vertical`, `dark-horizontal` oder `dark-vertical`. Setzt die veröffentlichten Bilder voraus, siehe [Vertrauenssiegel](/de/usage/blade-components/#vertrauenssiegel). Nicht gesetzt oder leer zeigt kein Siegel; andere Werte werfen beim Lesen eine `InvalidConfigurationException`. |
 | `ERECHT24_PRIVACY_POLICY_SEAL` | – | Wie oben, für die Datenschutzerklärung. |
 | `ERECHT24_BASE_URL` | `https://api.e-recht24.de/v2` | Basis-URL der API. |
 | `ERECHT24_TEXT_LANGUAGES` | `de,en` | Kommagetrennte Sprachen, die synchronisiert und ausgegeben werden. Nur `de` und `en` werden unterstützt. Der erste Eintrag ist die Fallback-Sprache. |
