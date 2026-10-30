@@ -23,16 +23,39 @@ sidebar:
 
 **Missing text:** if no text is stored for the type, the `erecht24::missing` view renders a short neutral message ("This legal text is currently not available.") instead of throwing. With `APP_DEBUG=true` it additionally shows the hint to run `php artisan erecht24:sync`. Read errors are logged and treated as missing.
 
-## Trust seal
+## Trust seals
 
-If you set `ERECHT24_IMPRINT_SEAL` and/or `ERECHT24_PRIVACY_POLICY_SEAL` (see [Configuration](/en/reference/configuration/)), the imprint and privacy policy components render the eRecht24 seal centered directly below the text, inside the wrapper `<div>`. The generic `legal-text` component behaves the same for those two types.
+The package can show the eRecht24 trust seal centered below the imprint and the privacy policy, inside the wrapper `<div>`. This applies to `<x-erecht24::imprint>`, `<x-erecht24::privacy-policy>` and the generic `legal-text` component for those two types. The social-media privacy policy and the `missing` placeholder never show a seal. Nothing is shown by default: without seal configuration the output is unchanged.
 
-- The image is served from `vendor/erecht24/` (`impressum-siegel-<variant>-large.webp` or `datenschutz-siegel-<variant>-large.webp`); publish them with `php artisan vendor:publish --tag=erecht24-assets` (copies to `public/vendor/erecht24/`). The URL is emitted even if the file is missing.
-- It is displayed 300 px wide (horizontal variants) or 180 px wide (vertical variants), with `width`/`height` attributes and `loading="lazy"`. No inline styles are used, so a strict Content Security Policy works.
-- The `alt` text is German or English, matching the rendered language (translation keys `erecht24::seal.imprint` and `erecht24::seal.privacy_policy`).
-- An invalid seal setting is logged as a warning and the text renders without seal.
-- If you published the views earlier, re-publish them or pass `seal` through in your copies; otherwise no seal is shown.
-- The social-media privacy policy and the `missing` placeholder never show a seal. Without seal configuration the output is unchanged.
+Choose a variant per text in `.env` (see [Configuration](/en/reference/configuration/)):
+
+```dotenv
+ERECHT24_IMPRINT_SEAL=light-horizontal
+ERECHT24_PRIVACY_POLICY_SEAL=dark-vertical
+```
+
+Allowed values are `light-horizontal`, `light-vertical`, `dark-horizontal` and `dark-vertical`. Leave a variable unset or empty to show no seal for that text.
+
+The seal images are not served from the package directory. Publish them to `public/vendor/erecht24/` after installation and as part of every deployment:
+
+```bash
+php artisan vendor:publish --tag=erecht24-assets
+```
+
+After a package update, add `--force` to overwrite the previously published images:
+
+```bash
+php artisan vendor:publish --tag=erecht24-assets --force
+```
+
+:::caution
+The image URL (`vendor/erecht24/impressum-siegel-<variant>-large.webp` or `vendor/erecht24/datenschutz-siegel-<variant>-large.webp`) is emitted even if the file was never published. Skipping the publish step therefore results in a broken image on your legal pages.
+:::
+
+- The seal images contain German text only, also on English pages. The `alt` text follows the rendered language (translation keys `erecht24::seal.imprint` and `erecht24::seal.privacy_policy`).
+- The seal is displayed 300 px wide (horizontal variants) or 180 px wide (vertical variants), with `width`/`height` attributes and `loading="lazy"`. No inline styles are used, so a strict Content Security Policy works.
+- An invalid value makes `Erecht24Settings` throw an `InvalidConfigurationException`. The components log it as a warning and render the text without seal.
+- To change the markup, publish the views with the `erecht24-views` tag (see below) and edit `components/legal-text`. The seal is passed in as `$seal`. If you published the views before seals existed, re-publish them or pass `seal` through in your copies; otherwise no seal is shown.
 
 ## Customizing the views
 

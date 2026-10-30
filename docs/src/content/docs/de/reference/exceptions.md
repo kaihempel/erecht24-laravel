@@ -39,9 +39,9 @@ Nur `Erecht24AuthenticationException` erbt von `Erecht24ApiException`. Alle ande
 
 **Erbt von**: `\RuntimeException` (final).
 
-**Wird geworfen, wenn**: ein Konfigurationswert vorhanden, aber ungültig ist: `push_enabled` (kein Boolean), `push_rate_limit`, `timeout` oder `sync.tries` (keine positive Ganzzahl) oder `text_languages` (leer oder mit einer anderen Sprache als `de` und `en`). Die Meldung nennt den fehlerhaften Schlüssel und den Grund.
+**Wird geworfen, wenn**: ein Konfigurationswert vorhanden, aber ungültig ist: `push_enabled` (kein Boolean), `push_rate_limit`, `timeout` oder `sync.tries` (keine positive Ganzzahl) `text_languages` (leer oder mit einer anderen Sprache als `de` und `en`) oder `seals.imprint` / `seals.privacy_policy` (keine bekannte Siegel-Variante). Die Meldung nennt den fehlerhaften Schlüssel und den Grund.
 
-**Behandlung**: Korrigieren Sie den Wert in Ihrer `.env`-Datei oder in `config/erecht24.php`. Die Befehle zum Registrieren und Abmelden sowie `erecht24:status` fangen sie ab und melden sie. Die Blade-Komponenten und der Manager lösen Sprachen über `LegalTextResolver` auf, der diese Exception abfängt und stattdessen auf eine Ersatzsprache ausweicht, statt fehlzuschlagen.
+**Behandlung**: Korrigieren Sie den Wert in Ihrer `.env`-Datei oder in `config/erecht24.php`. Die Befehle zum Registrieren und Abmelden sowie `erecht24:status` fangen sie ab und melden sie. Die Blade-Komponenten und der Manager lösen Sprachen über `LegalTextResolver` auf, der diese Exception abfängt und stattdessen auf eine Ersatzsprache ausweicht, statt fehlzuschlagen. Eine ungültige Siegel-Einstellung protokollieren die Komponenten als Warnung und geben den Text dann ohne Siegel aus.
 
 ## `LegalTextStoreException`
 
