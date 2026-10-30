@@ -17,6 +17,7 @@ use KaiHempel\ERecht24\Console\RegisterPushClientCommand;
 use KaiHempel\ERecht24\Console\StatusCommand;
 use KaiHempel\ERecht24\Console\SyncLegalTextCommand;
 use KaiHempel\ERecht24\Console\UnregisterPushClientCommand;
+use KaiHempel\ERecht24\Enums\SealVariant;
 use KaiHempel\ERecht24\Http\Controllers\PushController;
 use KaiHempel\ERecht24\Registration\PushClientRegistrar;
 use KaiHempel\ERecht24\Status\StatusInspector;
@@ -24,6 +25,7 @@ use KaiHempel\ERecht24\Storage\LegalTextStore;
 use KaiHempel\ERecht24\Support\EnvFileWriter;
 use KaiHempel\ERecht24\Sync\LegalTextSynchronizer;
 use KaiHempel\ERecht24\View\LegalTextResolver;
+use KaiHempel\ERecht24\View\SealResolver;
 
 class ERecht24ServiceProvider extends ServiceProvider
 {
@@ -63,6 +65,10 @@ class ERecht24ServiceProvider extends ServiceProvider
             $app->make(Erecht24Settings::class),
         ));
 
+        $this->app->singleton(SealResolver::class, fn ($app) => new SealResolver(
+            $app->make(Erecht24Settings::class),
+        ));
+
         $this->app->singleton(Erecht24Manager::class, fn ($app) => new Erecht24Manager(
             $app->make(LegalTextResolver::class),
             $app->make(LegalTextStore::class),
@@ -79,12 +85,15 @@ class ERecht24ServiceProvider extends ServiceProvider
         ], 'erecht24-config');
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'erecht24');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'erecht24');
 
         Blade::componentNamespace('KaiHempel\\ERecht24\\View\\Components', 'erecht24');
 
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/erecht24'),
         ], 'erecht24-views');
+
+        $this->publishes($this->sealAssets(), 'erecht24-assets');
 
         $this->registerPushRateLimiter();
         $this->registerPushRoute();
@@ -97,6 +106,25 @@ class ERecht24ServiceProvider extends ServiceProvider
                 StatusCommand::class,
             ]);
         }
+    }
+
+    /**
+     * The seal images referenced by `SealResolver`, keyed by source path.
+     *
+     * @return array<string, string>
+     */
+    private function sealAssets(): array
+    {
+        $assets = [];
+
+        foreach (['impressum', 'datenschutz'] as $prefix) {
+            foreach (SealVariant::cases() as $variant) {
+                $file = $prefix.'-siegel-'.$variant->fileSuffix().'.webp';
+                $assets[__DIR__.'/../public/'.$file] = public_path('vendor/erecht24/'.$file);
+            }
+        }
+
+        return $assets;
     }
 
     private function registerPushRateLimiter(): void

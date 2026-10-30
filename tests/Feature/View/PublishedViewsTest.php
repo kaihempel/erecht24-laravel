@@ -58,3 +58,18 @@ test('a published per-type view overrides only that type', function (): void {
     expect(Blade::render('<x-erecht24::imprint />'))->toContain('<article><p>imp</p></article>')
         ->and(Blade::render('<x-erecht24::privacy-policy />'))->not->toContain('<article>');
 });
+
+test('a published wrapper unaware of the seal still renders while a seal is configured', function (): void {
+    Storage::fake(config('erecht24.disk'));
+    app()->setLocale('de');
+    config(['erecht24.seals.imprint' => 'light-horizontal']);
+    app(LegalTextStore::class)->put(LegalTextType::Imprint, 'de', '<p>imp</p>');
+
+    $dir = resource_path('views/vendor/erecht24/components');
+    File::ensureDirectoryExists($dir);
+    File::put($dir.'/legal-text.blade.php', '<section class="unaware">{!! $content !!}</section>');
+    touch($dir.'/legal-text.blade.php', time() + 60); // defeat the compiled-view mtime cache of earlier tests
+
+    expect(Blade::render('<x-erecht24::imprint />'))->toContain('<section class="unaware"><p>imp</p></section>')
+        ->and(Blade::render('<x-erecht24::imprint />'))->not->toContain('<img');
+});
