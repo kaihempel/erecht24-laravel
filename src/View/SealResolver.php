@@ -44,15 +44,8 @@ final class SealResolver
 
     private function alt(LegalTextType $type, string $lang): string
     {
-        $german = $lang === 'de';
+        $key = $type === LegalTextType::Imprint ? 'imprint' : 'privacy_policy';
 
-        return match ($type) {
-            LegalTextType::Imprint => $german
-                ? 'Impressum – rechtssicher mit eRecht24'
-                : 'Legal notice – legally compliant with eRecht24',
-            default => $german
-                ? 'Datenschutzerklärung – rechtssicher mit eRecht24'
-                : 'Privacy policy – legally compliant with eRecht24',
-        };
+        return trans('erecht24::seal.'.$key, [], $lang === 'de' ? 'de' : 'en');
     }
 }

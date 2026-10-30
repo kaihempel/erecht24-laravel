@@ -9,9 +9,8 @@
 <div {{ $attributes->merge(['lang' => $lang]) }}>
     {!! $content !!}
 @if (! empty($seal))
-    <div class="erecht24-seal" style="text-align: center;">
-        <img src="{{ $seal->url }}" alt="{{ $seal->alt }}" width="{{ $seal->width }}" height="{{ $seal->height }}" loading="lazy"
-             style="width: {{ $seal->displayWidth }}px; max-width: 100%; height: auto;">
+    <div class="erecht24-seal" align="center">
+        <img src="{{ $seal->url }}" alt="{{ $seal->alt }}" width="{{ $seal->displayWidth }}" height="{{ (int) round($seal->displayWidth * $seal->height / $seal->width) }}" loading="lazy">
     </div>
 @endif
 </div>

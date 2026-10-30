@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace KaiHempel\ERecht24\View\Components;
 
 use Illuminate\Contracts\View\View as ViewContract;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 use Illuminate\View\Component;
 use KaiHempel\ERecht24\Enums\LegalTextType;
+use KaiHempel\ERecht24\Exceptions\InvalidConfigurationException;
 use KaiHempel\ERecht24\View\LegalTextResolver;
 use KaiHempel\ERecht24\View\LegalTextSeal;
 use KaiHempel\ERecht24\View\SealResolver;
@@ -47,7 +49,22 @@ abstract class AbstractLegalTextComponent extends Component
             'content' => $resolved->content,
             'type' => $type,
             'lang' => $resolved->lang,
-            'seal' => app(SealResolver::class)->for($type, $resolved->lang),
+            'seal' => $this->resolveSeal($type, $resolved->lang),
         ]);
+    }
+
+    /**
+     * A cosmetic seal setting must never take down a legal page: an invalid
+     * value is logged and the text renders without seal.
+     */
+    private function resolveSeal(LegalTextType $type, string $lang): ?LegalTextSeal
+    {
+        try {
+            return app(SealResolver::class)->for($type, $lang);
+        } catch (InvalidConfigurationException $e) {
+            Log::warning('eRecht24: invalid seal configuration, rendering without seal.', ['reason' => $e->getMessage()]);
+
+            return null;
+        }
     }
 }

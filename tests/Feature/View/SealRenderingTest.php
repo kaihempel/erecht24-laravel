@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\View\ViewException;
 use KaiHempel\ERecht24\Enums\LegalTextType;
-use KaiHempel\ERecht24\Exceptions\InvalidConfigurationException;
 use KaiHempel\ERecht24\Storage\LegalTextStore;
 use KaiHempel\ERecht24\View\Components\Imprint;
 use KaiHempel\ERecht24\View\Components\LegalText;
@@ -47,9 +46,9 @@ test('the imprint seal renders centered after the text inside the wrapper', func
     $html = sealMarkup('<x-erecht24::imprint />');
 
     expect($html)->toContain('vendor/erecht24/impressum-siegel-light-horizontal-large.webp')
-        ->and($html)->toContain('width="1425" height="600"')
-        ->and($html)->toContain('width: 300px; max-width: 100%; height: auto;')
-        ->and($html)->toContain('class="erecht24-seal" style="text-align: center;"')
+        ->and($html)->toContain('width="300" height="126"')
+        ->and($html)->not->toContain('style=')
+        ->and($html)->toContain('class="erecht24-seal" align="center"')
         ->and($html)->toContain('loading="lazy"')
         ->and(strpos($html, '<p>imprint</p>'))->toBeLessThan(strpos($html, '<img'))
         ->and(substr_count($html, '<img'))->toBe(1)
@@ -62,8 +61,7 @@ test('the privacy policy seal uses its own file and vertical size', function ():
     $html = sealMarkup('<x-erecht24::privacy-policy />');
 
     expect($html)->toContain('vendor/erecht24/datenschutz-siegel-dark-vertical-large.webp')
-        ->and($html)->toContain('width="900" height="1400"')
-        ->and($html)->toContain('width: 180px;');
+        ->and($html)->toContain('width="180" height="280"');
 });
 
 test('the generic tag renders the seal for imprint and privacy policy', function (): void {
@@ -88,18 +86,14 @@ test('a missing text renders no seal', function (): void {
     expect(sealMarkup('<x-erecht24::imprint />'))->not->toContain('<img');
 });
 
-test('an invalid seal value surfaces as invalid configuration', function (): void {
+test('an invalid seal value renders the text without seal and logs a warning', function (): void {
     config(['erecht24.seals.imprint' => 'blue']);
+    Log::spy();
 
-    try {
-        sealMarkup('<x-erecht24::imprint />');
-    } catch (ViewException $e) {
-        expect($e->getPrevious())->toBeInstanceOf(InvalidConfigurationException::class);
+    $html = sealMarkup('<x-erecht24::imprint />');
 
-        return;
-    }
-
-    $this->fail('Expected a ViewException.');
+    expect($html)->toContain('<p>imprint</p>')->not->toContain('<img');
+    Log::shouldHaveReceived('warning')->once();
 });
 
 test('rendering a seal performs no HTTP request', function (): void {

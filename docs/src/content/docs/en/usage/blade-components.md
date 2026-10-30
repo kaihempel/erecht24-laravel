@@ -27,9 +27,11 @@ sidebar:
 
 If you set `ERECHT24_IMPRINT_SEAL` and/or `ERECHT24_PRIVACY_POLICY_SEAL` (see [Configuration](/en/reference/configuration/)), the imprint and privacy policy components render the eRecht24 seal centered directly below the text, inside the wrapper `<div>`. The generic `legal-text` component behaves the same for those two types.
 
-- The image is served from `vendor/erecht24/` (`impressum-siegel-<variant>-large.webp` or `datenschutz-siegel-<variant>-large.webp`); you are responsible for publishing the image files. The URL is emitted even if the file is missing.
-- It is displayed 300 px wide (horizontal variants) or 180 px wide (vertical variants), never wider than its container, with `width`/`height` attributes and `loading="lazy"`. The styling is inline, so no CSS framework is needed.
-- The `alt` text is German or English, matching the rendered language.
+- The image is served from `vendor/erecht24/` (`impressum-siegel-<variant>-large.webp` or `datenschutz-siegel-<variant>-large.webp`); publish them with `php artisan vendor:publish --tag=erecht24-assets` (copies to `public/vendor/erecht24/`). The URL is emitted even if the file is missing.
+- It is displayed 300 px wide (horizontal variants) or 180 px wide (vertical variants), with `width`/`height` attributes and `loading="lazy"`. No inline styles are used, so a strict Content Security Policy works.
+- The `alt` text is German or English, matching the rendered language (translation keys `erecht24::seal.imprint` and `erecht24::seal.privacy_policy`).
+- An invalid seal setting is logged as a warning and the text renders without seal.
+- If you published the views earlier, re-publish them or pass `seal` through in your copies; otherwise no seal is shown.
 - The social-media privacy policy and the `missing` placeholder never show a seal. Without seal configuration the output is unchanged.
 
 ## Customizing the views

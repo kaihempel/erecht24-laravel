@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\ServiceProvider;
 use KaiHempel\ERecht24\ERecht24ServiceProvider;
 use KaiHempel\ERecht24\View\LegalTextResolver;
 use KaiHempel\ERecht24\View\SealResolver;
@@ -30,4 +31,15 @@ it('binds the seal resolver as a singleton', function () {
 it('binds the legal text resolver as a singleton', function () {
     expect(app(LegalTextResolver::class))
         ->toBe(app(LegalTextResolver::class));
+});
+
+it('publishes the referenced seal images under the erecht24-assets tag', function () {
+    $paths = ServiceProvider::pathsToPublish(ERecht24ServiceProvider::class, 'erecht24-assets');
+
+    expect($paths)->toHaveCount(8);
+
+    foreach ($paths as $from => $to) {
+        expect(file_exists($from))->toBeTrue()
+            ->and($to)->toContain('vendor/erecht24/');
+    }
 });
