@@ -1,5 +1,7 @@
 # Feature Specification: eRecht24 Package Configuration & Environment Handling
 
+> **Superseded (plugin key):** spec [015-shipped-plugin-key](../015-shipped-plugin-key/spec.md) ships the plugin key as `Erecht24Settings::DEFAULT_PLUGIN_KEY`. Everything below that requires `plugin_key` to have no default or `pluginKey()` to throw no longer applies; `api_key` and `push_secret` are unchanged.
+
 **Feature Branch**: `001-erecht24-config`
 
 **Created**: 2026-10-01
@@ -30,7 +32,7 @@ As a Laravel application developer installing the eRecht24 package, I want to pu
 1. **Given** a fresh Laravel application with the package installed, **When** the developer runs `php artisan vendor:publish --tag=erecht24-config`, **Then** a `config/erecht24.php` file is created in the application with all documented keys and their default values.
 2. **Given** a published config file, **When** the developer sets `ERECHT24_API_KEY`, `ERECHT24_PLUGIN_KEY`, `ERECHT24_PUSH_SECRET`, `ERECHT24_PUSH_PATH`, `ERECHT24_BASE_URL`, `ERECHT24_TEXT_LANGUAGES`, `ERECHT24_DISK`, `ERECHT24_DIRECTORY`, and `ERECHT24_TIMEOUT` in `.env`, **Then** the application resolves each corresponding configuration value from those environment variables.
 3. **Given** no `.env` overrides are set, **When** the configuration is read, **Then** `push_path` defaults to `/api/erecht24/push`, `base_url` defaults to `https://api.e-recht24.de/v2`, `text_languages` defaults to `de,en`, `disk` defaults to `local`, `directory` defaults to `erecht24`, and `timeout` defaults to `10`.
-4. **Given** the shipped default configuration, **When** inspecting the `plugin_key` setting, **Then** no default value is present (it is null/empty until the developer supplies one).
+4. **Given** the shipped default configuration, **When** inspecting the `plugin_key` setting, **Then** no default value is present (it is null/empty until the developer supplies one). *(Superseded by spec 015: `config('erecht24.plugin_key')` stays empty, but `pluginKey()` falls back to the shipped key.)*
 
 ---
 
@@ -66,7 +68,7 @@ As a developer who forgot to set a required credential, I want a clear, specific
 
 1. **Given** `ERECHT24_API_KEY` is empty or unset, **When** the application boots without using that value, **Then** no error occurs.
 2. **Given** `ERECHT24_API_KEY` is empty or unset, **When** code attempts to read the API key value, **Then** a descriptive error is raised identifying `api_key` as the missing required setting.
-3. **Given** `ERECHT24_PLUGIN_KEY` is empty or unset, **When** code attempts to read the plugin key value, **Then** a descriptive error is raised identifying `plugin_key` as the missing required setting.
+3. **Given** `ERECHT24_PLUGIN_KEY` is empty or unset, **When** code attempts to read the plugin key value, **Then** a descriptive error is raised identifying `plugin_key` as the missing required setting. *(Superseded by spec 015: `pluginKey()` returns the shipped key and never throws.)*
 4. **Given** `ERECHT24_PUSH_SECRET` is empty or unset, **When** code attempts to read the push secret value (e.g. to verify an incoming webhook push), **Then** a descriptive error is raised identifying `push_secret` as the missing required setting, rather than silently skipping verification.
 
 ---
@@ -87,7 +89,7 @@ As a developer who forgot to set a required credential, I want a clear, specific
 - **FR-001**: The package MUST provide a configuration file containing the following keys: `api_key`, `plugin_key`, `push_secret`, `push_path`, `base_url`, `text_languages`, `disk`, `directory`, `timeout`, and queue settings (`queue.connection`, `queue.name`) for the sync job.
 - **FR-002**: Each configuration key MUST be overridable via a corresponding environment variable: `ERECHT24_API_KEY`, `ERECHT24_PLUGIN_KEY`, `ERECHT24_PUSH_SECRET`, `ERECHT24_PUSH_PATH`, `ERECHT24_BASE_URL`, `ERECHT24_TEXT_LANGUAGES`, `ERECHT24_DISK`, `ERECHT24_DIRECTORY`, `ERECHT24_TIMEOUT`.
 - **FR-003**: The configuration file MUST be publishable into the host application independently of other package assets, under a distinct publish tag.
-- **FR-004**: The configuration file MUST NOT ship any default value for `plugin_key`; it must be empty/null until explicitly set, since this key identifies the plugin author's registration with eRecht24.
+- **FR-004**: The configuration file MUST NOT ship any default value for `plugin_key`; it must be empty/null until explicitly set, since this key identifies the plugin author's registration with eRecht24. *(Superseded by spec 015.)*
 - **FR-005**: The `push_path` setting MUST default to `/api/erecht24/push` when not overridden.
 - **FR-006**: The `base_url` setting MUST default to `https://api.e-recht24.de/v2` when not overridden.
 - **FR-007**: The `text_languages` setting MUST default to `de,en` when not overridden.

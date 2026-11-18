@@ -1,5 +1,7 @@
 # Contract: `Erecht24Settings` Public API
 
+> **Superseded (plugin key):** spec [015-shipped-plugin-key](../015-shipped-plugin-key/spec.md) ships the plugin key as `Erecht24Settings::DEFAULT_PLUGIN_KEY`. Everything below that requires `plugin_key` to have no default or `pluginKey()` to throw no longer applies; `api_key` and `push_secret` are unchanged.
+
 This package has no HTTP/network contract for this feature — the external interface it exposes to consumers is a PHP class contract (config file shape + value object method signatures), resolvable via the Laravel service container.
 
 ## Config file contract (`config/erecht24.php`)
@@ -9,7 +11,7 @@ Publishable under tag `erecht24-config`. Shape consumers may rely on (keys, type
 ```php
 return [
     'api_key' => env('ERECHT24_API_KEY'),
-    'plugin_key' => env('ERECHT24_PLUGIN_KEY'), // no default, ever
+    'plugin_key' => env('ERECHT24_PLUGIN_KEY'), // no config default; Erecht24Settings::pluginKey() falls back to DEFAULT_PLUGIN_KEY (spec 015)
     'push_secret' => env('ERECHT24_PUSH_SECRET'),
     'push_path' => env('ERECHT24_PUSH_PATH', '/api/erecht24/push'),
     'base_url' => env('ERECHT24_BASE_URL', 'https://api.e-recht24.de/v2'),

@@ -12,6 +12,7 @@ sidebar:
 - **Rotation.** Run `php artisan erecht24:register` (with the same push URL) again. eRecht24 issues a new secret and the old one stops working immediately; update `.env` and run `php artisan config:cache` right away.
 :::
 
+- **Plugin key.** The plugin key is shipped with the package and therefore public. It is not a secret. The API key and the push secret are the credentials to protect. `ERECHT24_PLUGIN_KEY` only overrides the shipped key.
 - **Verification.** The endpoint compares the secret in constant time with `hash_equals` and answers `503` when no secret is configured, so the endpoint never accepts pushes without a secret.
 - **No secrets in logs or output.** Neither the push secret nor the push payload is logged. Exception messages never contain the API key, plugin key or secret. `erecht24:status` reports only whether credentials are set, and push URLs are shown without user info or query string. `erecht24:register` prints the secret once, by design.
 

@@ -8,7 +8,7 @@ sidebar:
 Checkliste für jede Umgebung:
 
 - [ ] `APP_URL` ist die öffentliche HTTPS-URL dieser Umgebung.
-- [ ] `ERECHT24_API_KEY` und `ERECHT24_PLUGIN_KEY` sind gesetzt.
+- [ ] `ERECHT24_API_KEY` ist gesetzt.
 - [ ] `php artisan erecht24:register` wurde in dieser Umgebung ausgeführt und `ERECHT24_PUSH_SECRET` ist gesetzt.
 - [ ] `php artisan config:cache` (und `route:cache`, falls verwendet) lief nach der letzten Änderung an der `.env`.
 - [ ] Falls ein Vertrauenssiegel konfiguriert ist: `php artisan vendor:publish --tag=erecht24-assets --force` lief, sodass die Siegelbilder in `public/vendor/erecht24/` vorhanden sind und zur installierten Paketversion passen (siehe [Vertrauenssiegel](/de/usage/blade-components/#vertrauenssiegel)).

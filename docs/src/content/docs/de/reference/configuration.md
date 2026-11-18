@@ -10,7 +10,7 @@ sidebar:
 | Variable | Standard | Beschreibung |
 |---|---|---|
 | `ERECHT24_API_KEY` | – | **Pflicht.** API-Schlüssel Ihres eRecht24-Projekts. |
-| `ERECHT24_PLUGIN_KEY` | – | **Pflicht.** Plugin-Schlüssel, der bei jeder API-Anfrage mitgesendet wird. |
+| `ERECHT24_PLUGIN_KEY` | mit dem Paket ausgeliefert | Optional. Das Paket liefert den Plugin-Schlüssel mit, der bei jeder API-Anfrage mitgesendet wird. Setzen Sie die Variable nur, um ihn zu überschreiben; ein leerer Wert fällt auf den mitgelieferten Schlüssel zurück. |
 | `ERECHT24_PUSH_SECRET` | – | **Pflicht für Push.** Secret, das `erecht24:register` ausgibt. Ohne Secret antwortet der Push-Endpunkt mit `503`. |
 | `ERECHT24_PUSH_PATH` | `/api/erecht24/push` | Pfad des Push-Endpunkts. Ergibt zusammen mit `APP_URL` die Push-URL, die bei eRecht24 registriert wird. |
 | `ERECHT24_PUSH_ENABLED` | `true` | Mit `false` wird die Push-Route nicht registriert. |

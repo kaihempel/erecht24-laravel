@@ -24,7 +24,6 @@ it('reports absence without throwing when keys are missing', function () {
     $settings = new Erecht24Settings($config);
 
     expect($settings->hasApiKey())->toBeFalse()
-        ->and($settings->hasPluginKey())->toBeFalse()
         ->and($settings->hasPushSecret())->toBeFalse();
 });
 
@@ -37,7 +36,6 @@ it('reports absence when keys are empty strings', function () {
     $settings = new Erecht24Settings($config);
 
     expect($settings->hasApiKey())->toBeFalse()
-        ->and($settings->hasPluginKey())->toBeFalse()
         ->and($settings->hasPushSecret())->toBeFalse();
 });
 

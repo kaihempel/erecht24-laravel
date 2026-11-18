@@ -8,7 +8,6 @@ sidebar:
 ```dotenv
 APP_URL=https://www.example.com
 ERECHT24_API_KEY=ihr-api-schluessel
-ERECHT24_PLUGIN_KEY=ihr-plugin-schluessel
 ```
 
 ```bash

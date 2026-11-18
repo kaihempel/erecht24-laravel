@@ -8,7 +8,7 @@ sidebar:
 Checklist for each environment:
 
 - [ ] `APP_URL` is the public HTTPS URL of this environment.
-- [ ] `ERECHT24_API_KEY` and `ERECHT24_PLUGIN_KEY` are set.
+- [ ] `ERECHT24_API_KEY` is set.
 - [ ] `php artisan erecht24:register` has been run in this environment and `ERECHT24_PUSH_SECRET` is set.
 - [ ] `php artisan config:cache` (and `route:cache`, if you use it) ran after the last `.env` change.
 - [ ] If a trust seal is configured: `php artisan vendor:publish --tag=erecht24-assets --force` ran, so the seal images in `public/vendor/erecht24/` exist and match the installed package version (see [Trust seals](/en/usage/blade-components/#trust-seals)).

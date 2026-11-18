@@ -17,7 +17,7 @@ $text->html('de');   // ?string, ebenso $text->htmlDe / $text->htmlEn
 $text->modified;     // ?string, wie von der API geliefert (ebenso created, pushed, warnings)
 ```
 
-Außerdem verwaltet er Push-Clients: `listClients()`, `createClient(PushClient)`, `updateClient(PushClient)` (liefert ein neues Secret, das Sie speichern müssen), `deleteClient(int)` und `fireTestPush(int $clientId, string $type = 'ping')`. Anfragen werden bei Verbindungsfehlern, 5xx und 429 bis zu 3-mal im Abstand von 200 ms wiederholt. Fehler lösen eine `Erecht24ApiException` aus, ein `401` eine `Erecht24AuthenticationException`. Wird der Client ohne API- oder Plugin-Schlüssel aufgelöst, entsteht eine `MissingConfigurationException`.
+Außerdem verwaltet er Push-Clients: `listClients()`, `createClient(PushClient)`, `updateClient(PushClient)` (liefert ein neues Secret, das Sie speichern müssen), `deleteClient(int)` und `fireTestPush(int $clientId, string $type = 'ping')`. Anfragen werden bei Verbindungsfehlern, 5xx und 429 bis zu 3-mal im Abstand von 200 ms wiederholt. Fehler lösen eine `Erecht24ApiException` aus, ein `401` eine `Erecht24AuthenticationException`. Wird der Client ohne API-Schlüssel aufgelöst, entsteht eine `MissingConfigurationException`; ohne konfigurierten Plugin-Schlüssel verwendet er den mit dem Paket ausgelieferten Schlüssel.
 
 `KaiHempel\ERecht24\Storage\LegalTextStore` liest und schreibt die gespeicherten Dateien:
 

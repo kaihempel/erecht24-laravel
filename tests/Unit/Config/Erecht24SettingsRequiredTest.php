@@ -28,13 +28,6 @@ it('throws when apiKey is empty and returns the value when set', function () {
     expect(settingsWithCredentials('my-api-key', 'plugin', 'secret')->apiKey())->toBe('my-api-key');
 });
 
-it('throws when pluginKey is empty and returns the value when set', function () {
-    expect(fn () => settingsWithCredentials('api', null, 'secret')->pluginKey())
-        ->toThrow(MissingConfigurationException::class);
-
-    expect(settingsWithCredentials('api', 'my-plugin-key', 'secret')->pluginKey())->toBe('my-plugin-key');
-});
-
 it('throws when pushSecret is empty and returns the value when set', function () {
     expect(fn () => settingsWithCredentials('api', 'plugin', null)->pushSecret())
         ->toThrow(MissingConfigurationException::class);
