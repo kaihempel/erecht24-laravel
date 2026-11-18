@@ -17,7 +17,7 @@ $text->html('de');   // ?string, also $text->htmlDe / $text->htmlEn
 $text->modified;     // ?string, as delivered by the API (also created, pushed, warnings)
 ```
 
-It also manages push clients: `listClients()`, `createClient(PushClient)`, `updateClient(PushClient)` (returns a fresh secret that you must store), `deleteClient(int)` and `fireTestPush(int $clientId, string $type = 'ping')`. Requests are retried 3 times (200 ms apart) on connection errors, 5xx and 429. Failures throw `Erecht24ApiException`; a `401` throws `Erecht24AuthenticationException`. Resolving the client without API key or plugin key throws `MissingConfigurationException`.
+It also manages push clients: `listClients()`, `createClient(PushClient)`, `updateClient(PushClient)` (returns a fresh secret that you must store), `deleteClient(int)` and `fireTestPush(int $clientId, string $type = 'ping')`. Requests are retried 3 times (200 ms apart) on connection errors, 5xx and 429. Failures throw `Erecht24ApiException`; a `401` throws `Erecht24AuthenticationException`. Resolving the client without an API key throws `MissingConfigurationException`; without a configured plugin key it uses the key shipped with the package.
 
 `KaiHempel\ERecht24\Storage\LegalTextStore` reads and writes the stored files:
 

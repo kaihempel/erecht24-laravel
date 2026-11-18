@@ -25,13 +25,13 @@ Only `Erecht24AuthenticationException` extends `Erecht24ApiException`. All other
 
 **Thrown when**: the API answers with HTTP `401`. It carries the same properties as its parent.
 
-**Handling**: check `ERECHT24_API_KEY`, and `ERECHT24_PLUGIN_KEY` if you override the plugin key shipped with the package. Catching `Erecht24ApiException` also catches this class; catch it first if you want to treat authentication errors separately.
+**Handling**: check `ERECHT24_API_KEY`, and `ERECHT24_PLUGIN_KEY` if you override the plugin key shipped with the package. If you use the shipped plugin key and the API key is correct, update the package to the latest release, which ships the current plugin key. Catching `Erecht24ApiException` also catches this class; catch it first if you want to treat authentication errors separately.
 
 ## `MissingConfigurationException`
 
 **Extends**: `\RuntimeException` (final).
 
-**Thrown when**: a required credential is read but not configured: `api_key`, `plugin_key` or `push_secret`. The check happens lazily at use, not at application boot. Resolving `Erecht24Client` also throws it when the keys are missing, because the client reads the credentials in its constructor.
+**Thrown when**: a required credential is read but not configured: `api_key` or `push_secret`. The check happens lazily at use, not at application boot. Resolving `Erecht24Client` also throws it when the API key is missing, because the client reads the credentials in its constructor. The plugin key never throws: a missing or blank `plugin_key` falls back to the key shipped with the package.
 
 **Handling**: set `ERECHT24_API_KEY` and, for push, `ERECHT24_PUSH_SECRET` (see [Configuration](/en/reference/configuration/)). The register and unregister commands and `erecht24:status` catch it and report the missing key.
 

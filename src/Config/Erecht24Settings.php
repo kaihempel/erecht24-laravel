@@ -17,6 +17,14 @@ final class Erecht24Settings
 
     private const DEFAULT_PUSH_RATE_LIMIT = 30;
 
+    /**
+     * Plugin key shipped with the package. It identifies this package at
+     * eRecht24 and is not a secret. {@see self::pluginKey()} falls back to it,
+     * so `ERECHT24_PLUGIN_KEY` (config `erecht24.plugin_key`) overrides it only
+     * when set to a non-blank value.
+     */
+    public const DEFAULT_PLUGIN_KEY = '9xXEN4Sqp3Rrg6gF46Q5w49HsdF6C37hvyT2QYRR5sbyXXKnxTW3jG6uuJKj7sns';
+
     public function __construct(private readonly ConfigRepository $config) {}
 
     /**
@@ -28,11 +36,16 @@ final class Erecht24Settings
     }
 
     /**
-     * @throws MissingConfigurationException when empty
+     * The configured plugin key, or the key shipped with the package
+     * ({@see self::DEFAULT_PLUGIN_KEY}) when `erecht24.plugin_key`
+     * is null or blank. Applied on every read, so it also covers config set at
+     * runtime and older published config files. Never throws.
      */
     public function pluginKey(): string
     {
-        return $this->requireString('plugin_key');
+        $value = (string) $this->config->get('erecht24.plugin_key');
+
+        return trim($value) === '' ? self::DEFAULT_PLUGIN_KEY : $value;
     }
 
     /**
@@ -253,11 +266,12 @@ final class Erecht24Settings
     }
 
     /**
-     * Non-throwing presence check — never throws, unlike {@see pluginKey()}.
+     * Whether a plugin key is available. True unless the shipped key is blank,
+     * because {@see pluginKey()} falls back to it.
      */
     public function hasPluginKey(): bool
     {
-        return $this->hasString('plugin_key');
+        return trim($this->pluginKey()) !== '';
     }
 
     /**

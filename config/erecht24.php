@@ -14,7 +14,7 @@ return [
     | throws a MissingConfigurationException only at the point of use, not
     | at service-provider boot.
     |
-    | `plugin_key` ships with the package (ERecht24ServiceProvider::PLUGIN_KEY).
+    | `plugin_key` ships with the package (Erecht24Settings::DEFAULT_PLUGIN_KEY).
     | Set ERECHT24_PLUGIN_KEY only to override it; an empty value falls back
     | to the shipped key.
     |

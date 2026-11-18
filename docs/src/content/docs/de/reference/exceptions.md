@@ -25,13 +25,13 @@ Nur `Erecht24AuthenticationException` erbt von `Erecht24ApiException`. Alle ande
 
 **Wird geworfen, wenn**: die API mit HTTP `401` antwortet. Sie hat dieselben Eigenschaften wie ihre Elternklasse.
 
-**Behandlung**: Prüfen Sie `ERECHT24_API_KEY` und, falls Sie den mitgelieferten Plugin-Schlüssel überschreiben, `ERECHT24_PLUGIN_KEY`. Wer `Erecht24ApiException` fängt, fängt auch diese Klasse; fangen Sie sie zuerst ab, wenn Sie Authentifizierungsfehler gesondert behandeln möchten.
+**Behandlung**: Prüfen Sie `ERECHT24_API_KEY` und, falls Sie den mitgelieferten Plugin-Schlüssel überschreiben, `ERECHT24_PLUGIN_KEY`. Wenn Sie den mitgelieferten Plugin-Schlüssel verwenden und der API-Schlüssel korrekt ist, aktualisieren Sie das Paket auf das neueste Release, das den aktuellen Plugin-Schlüssel mitliefert. Wer `Erecht24ApiException` fängt, fängt auch diese Klasse; fangen Sie sie zuerst ab, wenn Sie Authentifizierungsfehler gesondert behandeln möchten.
 
 ## `MissingConfigurationException`
 
 **Erbt von**: `\RuntimeException` (final).
 
-**Wird geworfen, wenn**: ein erforderliches Credential gelesen wird, aber nicht konfiguriert ist: `api_key`, `plugin_key` oder `push_secret`. Die Prüfung erfolgt erst bei der Verwendung, nicht beim Booten der Anwendung. Auch das Auflösen von `Erecht24Client` wirft sie, wenn die Schlüssel fehlen, weil der Client die Credentials in seinem Konstruktor liest.
+**Wird geworfen, wenn**: ein erforderliches Credential gelesen wird, aber nicht konfiguriert ist: `api_key` oder `push_secret`. Die Prüfung erfolgt erst bei der Verwendung, nicht beim Booten der Anwendung. Auch das Auflösen von `Erecht24Client` wirft sie, wenn der API-Schlüssel fehlt, weil der Client die Credentials in seinem Konstruktor liest. Der Plugin-Schlüssel wirft nie: Ein fehlender oder leerer `plugin_key` fällt auf den mit dem Paket ausgelieferten Schlüssel zurück.
 
 **Behandlung**: Setzen Sie `ERECHT24_API_KEY` und, für Push, `ERECHT24_PUSH_SECRET` (siehe [Konfiguration](/de/reference/configuration/)). Die Befehle zum Registrieren und Abmelden sowie `erecht24:status` fangen sie ab und melden den fehlenden Schlüssel.
 

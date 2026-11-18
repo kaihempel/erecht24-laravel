@@ -84,8 +84,8 @@ final class StatusInspector
      */
     private function fetchClients(): array
     {
-        if (! $this->settings->hasApiKey() || ! $this->settings->hasPluginKey()) {
-            return [[], 'API key and plugin key must be configured to list push clients.'];
+        if (! $this->settings->hasApiKey()) {
+            return [[], 'API key must be configured to list push clients.'];
         }
 
         try {

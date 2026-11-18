@@ -1,5 +1,7 @@
 ---
 
+> **Superseded (plugin key):** spec [015-shipped-plugin-key](../015-shipped-plugin-key/spec.md) ships the plugin key as `Erecht24Settings::DEFAULT_PLUGIN_KEY`. Everything below that requires `plugin_key` to have no default or `pluginKey()` to throw no longer applies; `api_key` and `push_secret` are unchanged.
+
 description: "Task list for eRecht24 Package Configuration & Environment Handling"
 ---
 

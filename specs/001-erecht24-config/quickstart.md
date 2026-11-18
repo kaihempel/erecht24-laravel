@@ -1,5 +1,7 @@
 # Quickstart: eRecht24 Package Configuration
 
+> **Superseded (plugin key):** spec [015-shipped-plugin-key](../015-shipped-plugin-key/spec.md) ships the plugin key as `Erecht24Settings::DEFAULT_PLUGIN_KEY`. Everything below that requires `plugin_key` to have no default or `pluginKey()` to throw no longer applies; `api_key` and `push_secret` are unchanged.
+
 ## Install & publish config
 
 ```bash
