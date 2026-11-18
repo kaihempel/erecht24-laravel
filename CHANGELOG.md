@@ -22,6 +22,7 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 
 ### Changed
 
+- The eRecht24 plugin key now ships with the package as the constant `ERecht24ServiceProvider::PLUGIN_KEY`, so `ERECHT24_PLUGIN_KEY` is no longer required. A non-empty `ERECHT24_PLUGIN_KEY` (or `erecht24.plugin_key` in a published config) still takes precedence; null or blank values fall back to the shipped key, which also keeps older published configs working. `Erecht24Settings::pluginKey()` therefore no longer throws in a default setup. **Upgrade note:** existing `ERECHT24_PLUGIN_KEY` entries keep working and can be removed unless you want to override the key. The README, the EN/DE docs (configuration, requirements, quick start, setup, deployment checklist, exceptions, security) and `config/erecht24.php` no longer describe the key as required.
 - Documentation: `README.md` and `README.de.md` slimmed down to short entry points (pitch, requirements, installation, quick start, link to the docs site, disclaimer, license); `composer.json` gains `homepage` and `support` metadata. The docs domain is still a placeholder. No package API change. (#40)
 - Exclude development-only files (`.claude`, `.specify`, `specs`, `docs`, `CLAUDE.md`, `phpstan.neon`) from the Composer dist archive via `export-ignore`. (#31)
 

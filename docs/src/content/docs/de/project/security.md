@@ -12,6 +12,7 @@ sidebar:
 - **Rotation.** Führen Sie `php artisan erecht24:register` (mit derselben Push-URL) erneut aus. eRecht24 stellt ein neues Secret aus, das alte ist sofort ungültig; aktualisieren Sie umgehend die `.env` und führen Sie `php artisan config:cache` aus.
 :::
 
+- **Plugin-Schlüssel.** Der Plugin-Schlüssel wird mit dem Paket ausgeliefert und ist daher öffentlich. Er ist kein Geheimnis. Zu schützen sind der API-Schlüssel und das Push-Secret. `ERECHT24_PLUGIN_KEY` überschreibt den mitgelieferten Schlüssel nur.
 - **Prüfung.** Der Endpunkt vergleicht das Secret mit `hash_equals` in konstanter Zeit und antwortet mit `503`, wenn kein Secret konfiguriert ist; Pushes ohne Secret werden also nie angenommen.
 - **Keine Secrets in Logs oder Ausgaben.** Weder das Push-Secret noch der Push-Payload werden geloggt. Exception-Meldungen enthalten nie API-Schlüssel, Plugin-Schlüssel oder Secret. `erecht24:status` meldet nur, ob Zugangsdaten gesetzt sind, und Push-URLs werden ohne Benutzerinformationen und Query-String angezeigt. `erecht24:register` gibt das Secret bewusst einmal aus.
 

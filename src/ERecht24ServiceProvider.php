@@ -33,9 +33,18 @@ class ERecht24ServiceProvider extends ServiceProvider
 
     public const PUSH_ROUTE_NAME = 'erecht24.push';
 
+    /**
+     * Plugin key shipped with the package. It identifies this package at
+     * eRecht24 and is not a secret. `ERECHT24_PLUGIN_KEY` (config
+     * `erecht24.plugin_key`) overrides it when set to a non-empty value.
+     */
+    public const PLUGIN_KEY = '';
+
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/erecht24.php', 'erecht24');
+
+        $this->applyDefaultPluginKey();
 
         $this->app->singleton(Erecht24Settings::class, fn ($app) => new Erecht24Settings($app->make('config')));
 
@@ -105,6 +114,21 @@ class ERecht24ServiceProvider extends ServiceProvider
                 UnregisterPushClientCommand::class,
                 StatusCommand::class,
             ]);
+        }
+    }
+
+    /**
+     * Falls back to the shipped plugin key unless a non-empty value is
+     * configured (env, published config or runtime config). Also covers
+     * published config files from before the key shipped with the package.
+     */
+    private function applyDefaultPluginKey(): void
+    {
+        $config = $this->app->make('config');
+        $configured = $config->get('erecht24.plugin_key');
+
+        if (! is_string($configured) || trim($configured) === '') {
+            $config->set('erecht24.plugin_key', self::PLUGIN_KEY);
         }
     }
 

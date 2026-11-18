@@ -10,7 +10,7 @@ sidebar:
 | Variable | Default | Description |
 |---|---|---|
 | `ERECHT24_API_KEY` | – | **Required.** API key of your eRecht24 project. |
-| `ERECHT24_PLUGIN_KEY` | – | **Required.** Plugin key sent with every API request. |
+| `ERECHT24_PLUGIN_KEY` | shipped with the package | Optional. The package ships the plugin key sent with every API request. Set this only to override it; an empty value falls back to the shipped key. |
 | `ERECHT24_PUSH_SECRET` | – | **Required for push.** Secret issued by `erecht24:register`. Without it the push endpoint answers `503`. |
 | `ERECHT24_PUSH_PATH` | `/api/erecht24/push` | Path of the push endpoint. Combined with `APP_URL` to build the push URL that is registered at eRecht24. |
 | `ERECHT24_PUSH_ENABLED` | `true` | Set to `false` to not register the push route. |

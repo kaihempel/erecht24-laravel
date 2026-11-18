@@ -15,7 +15,7 @@ Laravel integration for the [eRecht24](https://www.e-recht24.de) legal-texts API
 
 - PHP 8.3 or newer
 - Laravel 12 or 13
-- An eRecht24 account with a project in the eRecht24 Projekt Manager, its API key and a plugin key
+- An eRecht24 account with a project in the eRecht24 Projekt Manager, and its API key
 - A URL for your application that is reachable over the public internet (for push notifications)
 - A queue worker, or `QUEUE_CONNECTION=sync`
 - A filesystem disk for the stored texts (the default `local` disk works for a single server)
@@ -34,7 +34,6 @@ The service provider and the `ERecht24` facade alias are auto-discovered. Publis
 ```dotenv
 APP_URL=https://www.example.com
 ERECHT24_API_KEY=your-api-key
-ERECHT24_PLUGIN_KEY=your-plugin-key
 ```
 
 ```bash

@@ -9,8 +9,8 @@ import { Steps } from '@astrojs/starlight/components';
 
 <Steps>
 
-1. **Create the project and API key.** In the eRecht24 Projekt Manager, create a project for the website (or open the existing one), fill in the legal texts and create an API key for it. You also need a plugin key.
-2. **Configure `.env`.** Set `ERECHT24_API_KEY`, `ERECHT24_PLUGIN_KEY` and a correct `APP_URL`. Optionally set `ERECHT24_AUTHOR_MAIL`, `ERECHT24_TEXT_LANGUAGES` and the storage settings.
+1. **Create the project and API key.** In the eRecht24 Projekt Manager, create a project for the website (or open the existing one), fill in the legal texts and create an API key for it.
+2. **Configure `.env`.** Set `ERECHT24_API_KEY` and a correct `APP_URL`. The plugin key ships with the package; set `ERECHT24_PLUGIN_KEY` only to override it. Optionally set `ERECHT24_AUTHOR_MAIL`, `ERECHT24_TEXT_LANGUAGES` and the storage settings.
 3. **Register the push client.**
 
    ```bash
