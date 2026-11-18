@@ -38,7 +38,7 @@ class ERecht24ServiceProvider extends ServiceProvider
      * eRecht24 and is not a secret. `ERECHT24_PLUGIN_KEY` (config
      * `erecht24.plugin_key`) overrides it when set to a non-empty value.
      */
-    public const PLUGIN_KEY = '';
+    public const PLUGIN_KEY = '9xXEN4Sqp3Rrg6gF46Q5w49HsdF6C37hvyT2QYRR5sbyXXKnxTW3jG6uuJKj7sns';
 
     public function register(): void
     {
