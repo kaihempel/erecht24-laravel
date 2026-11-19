@@ -1,6 +1,8 @@
 All notable changes to `erecht24-laravel` will be documented in this file.
 
-## Unreleased
+## 1.1.0 – 2026-11-19
+
+**Highlights:** optional eRecht24 trust seals for imprint and privacy policy; the plugin key now ships with the package, so `ERECHT24_PLUGIN_KEY` is no longer required; bilingual (EN/DE) documentation site at `erecht24-laravel.kuweh.de` with exceptions reference and troubleshooting; the sync now stores the source modification date.
 
 ### Added
 
@@ -23,7 +25,7 @@ All notable changes to `erecht24-laravel` will be documented in this file.
 ### Changed
 
 - The eRecht24 plugin key now ships with the package as the constant `Erecht24Settings::DEFAULT_PLUGIN_KEY`, so `ERECHT24_PLUGIN_KEY` is no longer required. A non-empty `ERECHT24_PLUGIN_KEY` (or `erecht24.plugin_key` in a published config) still takes precedence; `Erecht24Settings::pluginKey()` falls back to the shipped key whenever the configured value is null or blank (also for older published configs and config changed at runtime) and no longer throws `MissingConfigurationException`. `config('erecht24.plugin_key')` itself stays empty by default. `erecht24:status` now only requires the API key before listing push clients. SemVer impact: MINOR (relaxed precondition; every configuration that worked before behaves the same, only the former `MissingConfigurationException` path for an unset plugin key now succeeds). **Upgrade note:** existing `ERECHT24_PLUGIN_KEY` entries keep working and can be removed unless you want to override the key. The README, the EN/DE docs (configuration, requirements, quick start, setup, deployment checklist, exceptions, API client, security) and `config/erecht24.php` no longer describe the key as required. (#67)
-- Documentation: `README.md` and `README.de.md` slimmed down to short entry points (pitch, requirements, installation, quick start, link to the docs site, disclaimer, license); `composer.json` gains `homepage` and `support` metadata. The docs domain is still a placeholder. No package API change. (#40)
+- Documentation: `README.md` and `README.de.md` slimmed down to short entry points (pitch, requirements, installation, quick start, link to the docs site, disclaimer, license); `composer.json` gains `homepage` and `support` metadata. (The docs domain was still a placeholder at that point; the site is now published at `erecht24-laravel.kuweh.de`.) No package API change. (#40)
 - Exclude development-only files (`.claude`, `.specify`, `specs`, `docs`, `CLAUDE.md`, `phpstan.neon`) from the Composer dist archive via `export-ignore`. (#31)
 
 ## 1.0.0 – 2026-10-05
