@@ -10,7 +10,7 @@
     {!! $content !!}
 @if (! empty($seal))
     <div class="erecht24-seal" align="center">
-        <img src="{{ $seal->url }}" alt="{{ $seal->alt }}" width="{{ $seal->displayWidth }}" height="{{ (int) round($seal->displayWidth * $seal->height / $seal->width) }}" loading="lazy">
+        <img src="{{ $seal->url }}" alt="{{ $seal->alt }}" width="{{ $seal->displayWidth }}" height="{{ $seal->displayHeight() }}" loading="lazy">
     </div>
 @endif
 </div>

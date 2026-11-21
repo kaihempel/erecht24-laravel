@@ -8,13 +8,16 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Log;
 use KaiHempel\ERecht24\Config\Erecht24Settings;
 use KaiHempel\ERecht24\Enums\LegalTextType;
+use KaiHempel\ERecht24\Exceptions\InvalidConfigurationException;
 use KaiHempel\ERecht24\Storage\LegalTextStore;
 use KaiHempel\ERecht24\View\LegalTextResolver;
+use KaiHempel\ERecht24\View\LegalTextSeal;
 use KaiHempel\ERecht24\View\ResolvedLegalText;
+use KaiHempel\ERecht24\View\SealResolver;
 
 /**
- * Programmatic access to stored legal texts (e.g. for Inertia props). Reads the
- * store only, never calls the API. Language resolution is shared with the Blade
+ * Programmatic access to stored legal texts and the configured trust seal (e.g.
+ * for Inertia props). Reads the store and configuration only, never calls the API. Language resolution is shared with the Blade
  * components via {@see LegalTextResolver}.
  */
 final class Erecht24Manager
@@ -23,6 +26,7 @@ final class Erecht24Manager
         private readonly LegalTextResolver $resolver,
         private readonly LegalTextStore $store,
         private readonly Erecht24Settings $settings,
+        private readonly SealResolver $seals,
     ) {}
 
     /**
@@ -76,6 +80,28 @@ final class Erecht24Manager
                 $resolved->lang,
                 $e::class,
             ));
+
+            return null;
+        }
+    }
+
+    /**
+     * The trust seal configured for the given type (image URL, alt text and sizes), or null
+     * when none is configured, for the social-media privacy policy, or when the seal setting
+     * is invalid (logged, never thrown). Reads configuration only: it does not depend on a
+     * stored text, so combine it with `has()` or `resolve()` to show the seal only below a
+     * text. `$lang` selects the alt text and defaults to the app locale.
+     *
+     * @throws \InvalidArgumentException when $type is not a known legal text type
+     */
+    public function seal(LegalTextType|string $type, ?string $lang = null): ?LegalTextSeal
+    {
+        $type = $this->type($type);
+
+        try {
+            return $this->seals->for($type, $lang ?? app()->getLocale());
+        } catch (InvalidConfigurationException $e) {
+            Log::warning('eRecht24: invalid seal configuration, returning no seal.', ['reason' => $e->getMessage()]);
 
             return null;
         }

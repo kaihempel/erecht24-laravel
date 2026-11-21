@@ -36,6 +36,10 @@ ERECHT24_PRIVACY_POLICY_SEAL=dark-vertical
 
 Allowed values are `light-horizontal`, `light-vertical`, `dark-horizontal` and `dark-vertical`. Leave a variable unset or empty to show no seal for that text.
 
+:::note
+Only the Blade components render the seal automatically. If you output the texts through the facade (Inertia, API responses), these settings alone show nothing: fetch the seal with `ERecht24::seal()` and render it yourself, see [Facade and Inertia](/en/usage/facade-and-inertia/#trust-seal).
+:::
+
 The seal images are not served from the package directory. Publish them to `public/vendor/erecht24/` after installation and as part of every deployment:
 
 ```bash

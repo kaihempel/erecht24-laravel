@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Facade;
 use KaiHempel\ERecht24\Enums\LegalTextType;
 use KaiHempel\ERecht24\Erecht24Manager;
 use KaiHempel\ERecht24\ERecht24ServiceProvider;
+use KaiHempel\ERecht24\View\LegalTextSeal;
 use KaiHempel\ERecht24\View\ResolvedLegalText;
 
 /**
@@ -16,6 +17,7 @@ use KaiHempel\ERecht24\View\ResolvedLegalText;
  * @method static bool has(LegalTextType|string $type, ?string $lang = null)
  * @method static ResolvedLegalText|null resolve(LegalTextType|string $type, ?string $lang = null)
  * @method static CarbonImmutable|null lastModified(LegalTextType|string $type, ?string $lang = null)
+ * @method static LegalTextSeal|null seal(LegalTextType|string $type, ?string $lang = null)
  * @method static array<int, string> languages()
  *
  * @see Erecht24Manager

@@ -36,6 +36,10 @@ ERECHT24_PRIVACY_POLICY_SEAL=dark-vertical
 
 Erlaubte Werte sind `light-horizontal`, `light-vertical`, `dark-horizontal` und `dark-vertical`. Lassen Sie eine Variable ungesetzt oder leer, um für diesen Text kein Siegel anzuzeigen.
 
+:::note
+Nur die Blade-Komponenten geben das Siegel automatisch aus. Wenn Sie die Texte über die Facade ausgeben (Inertia, API-Antworten), bewirken diese Einstellungen allein nichts: Holen Sie das Siegel mit `ERecht24::seal()` und geben Sie es selbst aus, siehe [Facade und Inertia](/de/usage/facade-and-inertia/#vertrauenssiegel).
+:::
+
 Die Siegelbilder werden nicht aus dem Paketverzeichnis ausgeliefert. Veröffentlichen Sie sie nach der Installation und bei jedem Deployment nach `public/vendor/erecht24/`:
 
 ```bash
