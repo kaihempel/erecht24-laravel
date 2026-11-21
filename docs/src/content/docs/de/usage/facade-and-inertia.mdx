@@ -15,6 +15,7 @@ Die Facade `ERecht24` (dahinter steht `KaiHempel\ERecht24\Erecht24Manager`) biet
 | `ERecht24::resolve(LegalTextType\|string $type, ?string $lang = null)` | `?ResolvedLegalText` – `content`, ausgelieferte Sprache `lang`, normalisierte angefragte Sprache `requestedLang` und `isFallback()` oder `null`, wenn nichts gespeichert ist |
 | `ERecht24::has(LegalTextType\|string $type, ?string $lang = null)` | `bool` |
 | `ERecht24::lastModified(LegalTextType\|string $type, ?string $lang = null)` | `?CarbonImmutable` – Zeitpunkt, zu dem der zurückgegebene Text lokal gespeichert wurde |
+| `ERecht24::seal(LegalTextType\|string $type, ?string $lang = null)` | `?LegalTextSeal` – das konfigurierte [Vertrauenssiegel](/de/usage/facade-and-inertia/#vertrauenssiegel) oder `null`, wenn keines konfiguriert ist |
 | `ERecht24::languages()` | `array<int, string>` – konfigurierte Sprachen |
 
 `$type` ist ein `LegalTextType`-Case oder dessen Wert (`imprint`, `privacyPolicy`, `privacyPolicySocialMedia`). Andere Strings lösen eine `\InvalidArgumentException` aus.
@@ -88,3 +89,34 @@ return Inertia::render('Legal/Show', [
 ```
 
 Setzen Sie `lang` als `lang`-Attribut auf das Element, das den Text umschließt, und nutzen Sie `isFallback`, um einen Hinweis wie „Dieser Text ist nur auf Deutsch verfügbar“ anzuzeigen.
+
+## Vertrauenssiegel
+
+Die Siegel-Einstellungen `ERECHT24_IMPRINT_SEAL` und `ERECHT24_PRIVACY_POLICY_SEAL` werden nur von den [Blade-Komponenten](/de/usage/blade-components/#vertrauenssiegel) automatisch ausgegeben. Mit der Facade geben Sie das Siegel selbst aus: `ERecht24::seal()` liefert ein `KaiHempel\ERecht24\View\LegalTextSeal` mit der Bild-`url`, dem `alt`-Text, den Originalmaßen `width` und `height`, der empfohlenen `displayWidth` und `displayHeight()`.
+
+```php
+$text = ERecht24::resolve(LegalTextType::Imprint);
+$seal = $text === null ? null : ERecht24::seal(LegalTextType::Imprint, $text->lang);
+
+return Inertia::render('Legal/Show', [
+    'html' => $text?->content,
+    'seal' => $seal === null ? null : [
+        'url' => $seal->url,
+        'alt' => $seal->alt,
+        'width' => $seal->displayWidth,
+        'height' => $seal->displayHeight(),
+    ],
+]);
+```
+
+```tsx
+{seal !== null && (
+    <img src={seal.url} alt={seal.alt} width={seal.width} height={seal.height} loading="lazy" />
+)}
+```
+
+- `seal()` liefert `null`, wenn kein Siegel konfiguriert ist, immer für die Social-Media-Datenschutzerklärung und bei einem ungültigen Wert (wird als Warnung protokolliert, nie geworfen).
+- Die Methode liest nur die Konfiguration und prüft nicht, ob ein Text gespeichert ist. Kombinieren Sie sie wie oben mit `resolve()` oder `has()`, um das Siegel nur unter einem Text anzuzeigen.
+- `$lang` bestimmt den `alt`-Text (Deutsch für `de`, sonst Englisch) und entspricht standardmäßig der App-Locale.
+- Das Bild muss bei jedem Deployment mit `php artisan vendor:publish --tag=erecht24-assets` veröffentlicht werden, genau wie bei den Blade-Komponenten; sonst zeigt die URL auf eine fehlende Datei.
+- Wenn Sie das HTML des Rechtstexts bereinigen, übergeben Sie das Siegel wie hier als eigene Prop, statt ein `<img>` an das HTML anzuhängen.

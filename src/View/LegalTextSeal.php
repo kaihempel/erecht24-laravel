@@ -16,4 +16,12 @@ final readonly class LegalTextSeal
         public int $height,
         public int $displayWidth,
     ) {}
+
+    /**
+     * Display height in CSS pixels that keeps the intrinsic aspect ratio at `displayWidth`.
+     */
+    public function displayHeight(): int
+    {
+        return (int) round($this->displayWidth * $this->height / $this->width);
+    }
 }

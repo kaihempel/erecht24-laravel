@@ -19,6 +19,9 @@ final class SealResolver
     public function __construct(private readonly Erecht24Settings $settings) {}
 
     /**
+     * `$lang` only selects the alt text: German for `de` and its regional
+     * variants (`de_DE`, `de-AT`), English otherwise.
+     *
      * @throws InvalidConfigurationException when the seal setting is invalid
      */
     public function for(LegalTextType $type, string $lang): ?LegalTextSeal
@@ -46,6 +49,6 @@ final class SealResolver
     {
         $key = $type === LegalTextType::Imprint ? 'imprint' : 'privacy_policy';
 
-        return trans('erecht24::seal.'.$key, [], $lang === 'de' ? 'de' : 'en');
+        return trans('erecht24::seal.'.$key, [], preg_match('/^de(?:[_-]|$)/i', trim($lang)) === 1 ? 'de' : 'en');
     }
 }

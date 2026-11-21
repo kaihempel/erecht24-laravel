@@ -15,6 +15,7 @@ The `ERecht24` facade (backed by `KaiHempel\ERecht24\Erecht24Manager`) gives pro
 | `ERecht24::resolve(LegalTextType\|string $type, ?string $lang = null)` | `?ResolvedLegalText` – `content`, delivered `lang`, normalized `requestedLang` and `isFallback()`, or `null` if none is stored |
 | `ERecht24::has(LegalTextType\|string $type, ?string $lang = null)` | `bool` |
 | `ERecht24::lastModified(LegalTextType\|string $type, ?string $lang = null)` | `?CarbonImmutable` – when the returned text was stored locally |
+| `ERecht24::seal(LegalTextType\|string $type, ?string $lang = null)` | `?LegalTextSeal` – the configured [trust seal](/en/usage/facade-and-inertia/#trust-seal), or `null` if none is configured |
 | `ERecht24::languages()` | `array<int, string>` – configured languages |
 
 `$type` is a `LegalTextType` case or its value (`imprint`, `privacyPolicy`, `privacyPolicySocialMedia`). Other strings throw an `\InvalidArgumentException`.
@@ -88,3 +89,34 @@ return Inertia::render('Legal/Show', [
 ```
 
 Put `lang` on the `lang` attribute of the element that wraps the text, and use `isFallback` to show a notice such as "This text is only available in German".
+
+## Trust seal
+
+The seal settings `ERECHT24_IMPRINT_SEAL` and `ERECHT24_PRIVACY_POLICY_SEAL` are rendered automatically only by the [Blade components](/en/usage/blade-components/#trust-seals). With the facade you render the seal yourself: `ERecht24::seal()` returns a `KaiHempel\ERecht24\View\LegalTextSeal` with the image `url`, the `alt` text, the intrinsic `width` and `height`, the recommended `displayWidth` and `displayHeight()`.
+
+```php
+$text = ERecht24::resolve(LegalTextType::Imprint);
+$seal = $text === null ? null : ERecht24::seal(LegalTextType::Imprint, $text->lang);
+
+return Inertia::render('Legal/Show', [
+    'html' => $text?->content,
+    'seal' => $seal === null ? null : [
+        'url' => $seal->url,
+        'alt' => $seal->alt,
+        'width' => $seal->displayWidth,
+        'height' => $seal->displayHeight(),
+    ],
+]);
+```
+
+```tsx
+{seal !== null && (
+    <img src={seal.url} alt={seal.alt} width={seal.width} height={seal.height} loading="lazy" />
+)}
+```
+
+- `seal()` returns `null` when no seal is configured, always for the social-media privacy policy, and when the setting is invalid (logged as a warning, never thrown).
+- It reads the configuration only and does not check whether a text is stored. Combine it with `resolve()` or `has()`, as above, to show the seal only below a text.
+- `$lang` selects the `alt` text (German for `de`, English otherwise) and defaults to the app locale.
+- The image must be published with `php artisan vendor:publish --tag=erecht24-assets` in every deployment, exactly as for the Blade components; otherwise the URL points to a missing file.
+- If you sanitize the legal text HTML, pass the seal as its own prop as shown here instead of appending an `<img>` to the HTML.

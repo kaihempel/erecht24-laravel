@@ -1,5 +1,11 @@
 All notable changes to `erecht24-laravel` will be documented in this file.
 
+## Unreleased
+
+### Added
+
+- `ERecht24::seal(LegalTextType|string $type, ?string $lang = null)` (and `Erecht24Manager::seal()`) returns the configured trust seal as a `LegalTextSeal` (image URL, alt text, sizes), so applications that render the texts through the facade (Inertia, API responses) can show the seal too. Until now `ERECHT24_IMPRINT_SEAL` / `ERECHT24_PRIVACY_POLICY_SEAL` only had an effect in the Blade components. Returns `null` when no seal is configured, for the social-media privacy policy, and for an invalid setting (logged as a warning, never thrown); reads configuration only and does not depend on a stored text. New `LegalTextSeal::displayHeight()`; the Blade view uses it, its output is unchanged. The seal alt text is now German for regional locales such as `de_DE` / `de-AT` as well. `Erecht24Manager`'s constructor takes `SealResolver` as a fourth argument (only relevant if you instantiate the manager yourself instead of resolving it from the container). SemVer impact: MINOR. Documented on the EN/DE "Facade and Inertia", "Blade components" and configuration pages.
+
 ## 1.1.0 – 2026-11-19
 
 **Highlights:** optional eRecht24 trust seals for imprint and privacy policy; the plugin key now ships with the package, so `ERECHT24_PLUGIN_KEY` is no longer required; bilingual (EN/DE) documentation site at `erecht24-laravel.kuweh.de` with exceptions reference and troubleshooting; the sync now stores the source modification date.
